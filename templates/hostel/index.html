@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Hostels & Occupancy{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>🏢 Hostel & Room Bed Allocation</h2>
+        <p class="text-muted">Manage campus residential halls, room capacities, and student allocations</p>
+    </div>
+</div>
+
+{% for h in hostels %}
+<div class="card m-b-20">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h3>{{ h.name }} <span class="badge badge-primary">{{ h.type }}</span></h3>
+            <div class="small-text text-muted">Warden: {{ h.warden_name }} ({{ h.warden_phone }})</div>
+        </div>
+        <span class="badge badge-info">{{ h.total_rooms }} Rooms</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Room No</th>
+                        <th>Capacity</th>
+                        <th>Occupied</th>
+                        <th>Allocated Residents</th>
+                        <th>Term Fee</th>
+                        <th class="text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in h.rooms %}
+                    <tr>
+                        <td><strong>Room {{ r.room_no }}</strong></td>
+                        <td>{{ r.capacity }} Beds</td>
+                        <td>
+                            <span class="badge {% if r.occupied >= r.capacity %}badge-danger{% else %}badge-success{% endif %}">
+                                {{ r.occupied }} / {{ r.capacity }} Occupied
+                            </span>
+                        </td>
+                        <td>
+                            {% for a in r.allocations %}
+                            <span class="badge badge-light">👤 {{ a.student_name }}</span>
+                            {% else %}
+                            <span class="text-muted small-text">Vacant</span>
+                            {% endfor %}
+                        </td>
+                        <td>${{ "%.2f"|format(r.fee_per_term) }}</td>
+                        <td class="text-right">
+                            {% if r.occupied < r.capacity %}
+                            <form method="POST" action="{{ url_for('hostel.allocate') }}" class="inline-form">
+                                <input type="hidden" name="hostel_id" value="{{ h.id }}">
+                                <input type="hidden" name="room_no" value="{{ r.room_no }}">
+                                <select name="student_id" class="form-control form-control-sm inline-select" required>
+                                    <option value="">Select Student...</option>
+                                    {% for s in students %}
+                                    <option value="{{ s.id }}">{{ s.full_name }} ({{ s.student_id }})</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary">🛏️ Allocate Bed</button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted small-text">Room Full</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
