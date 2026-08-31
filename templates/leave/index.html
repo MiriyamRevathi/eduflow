@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Leave Management{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>✉️ Leave Applications & Approval Workflow</h2>
+        <p class="text-muted">Apply for leave, track request statuses, and process administration approvals</p>
+    </div>
+</div>
+
+<div class="grid-2 m-b-20">
+    <div class="card">
+        <div class="card-header">
+            <h3>📝 Apply for Leave</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('leave.apply') }}">
+                <div class="form-group">
+                    <label>Leave Category *</label>
+                    <select name="leave_type" class="form-control" required>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Medical Leave">Medical Leave</option>
+                        <option value="Academic Duty">Academic Duty</option>
+                    </select>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Start Date *</label>
+                        <input type="date" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date *</label>
+                        <input type="date" name="end_date" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Reason *</label>
+                    <textarea name="reason" class="form-control" rows="3" placeholder="State explicit reason for leave..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>📋 Leave Records & Approvals</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Type</th>
+                            <th>Dates</th>
+                            <th>Status</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in leaves %}
+                        <tr>
+                            <td>
+                                <strong>{{ l.applicant_name }}</strong>
+                                <div class="small-text text-muted">{{ l.role }}</div>
+                            </td>
+                            <td><span class="badge badge-info">{{ l.leave_type }}</span></td>
+                            <td><span class="small-text">{{ l.start_date }} to {{ l.end_date }}</span></td>
+                            <td>
+                                <span class="badge {% if l.status == 'APPROVED' %}badge-success{% elif l.status == 'REJECTED' %}badge-danger{% else %}badge-warning{% endif %}">{{ l.status }}</span>
+                            </td>
+                            <td class="text-right">
+                                {% if l.status == 'PENDING' %}
+                                <form method="POST" action="{{ url_for('leave.update_status', leave_id=l.id) }}" class="inline-form">
+                                    <button type="submit" name="status" value="APPROVED" class="btn btn-sm btn-success">Approve</button>
+                                    <button type="submit" name="status" value="REJECTED" class="btn btn-sm btn-danger">Reject</button>
+                                </form>
+                                {% else %}
+                                <span class="text-muted small-text">Processed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center p-20 text-muted">No leave records submitted.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
