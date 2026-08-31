@@ -7,5 +7,14 @@
     "entity": "SYSTEM",
     "details": "Initial system data seeded successfully.",
     "timestamp": "2026-01-01 09:00:00"
+  },
+  {
+    "id": "841346db-ced4-40e4-864f-25e9a1e35814",
+    "user": "admin@eduflow.local",
+    "role": "SUPER_ADMIN",
+    "action": "USER_LOGIN",
+    "entity": "AUTH",
+    "details": "User logged in successfully.",
+    "timestamp": "2026-08-31 11:51:10"
   }
 ]
