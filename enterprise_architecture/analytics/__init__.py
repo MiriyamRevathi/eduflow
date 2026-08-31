@@ -1,0 +1,1 @@
+"""EduFlow ERP analytics package."""
