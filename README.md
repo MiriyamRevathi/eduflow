@@ -17,7 +17,7 @@ EduFlow ERP is a full-stack, enterprise-grade School & College Management System
 - **Library Circulation**: Catalog management, book issue/return tracking, and automated overdue fine calculation ($2/day).
 - **Hostel & Transport**: Hostel building/room/bed allocation and transport route assignment with vehicle capacity check.
 - **Leave & Events**: Multi-role leave application & approval pipeline, interactive events calendar, and targeted announcements.
-- **Local Machine Learning**: Scikit-Learn Random Forest student academic-risk prediction classifier (`LOW RISK`, `MEDIUM RISK`, `HIGH RISK`) with actionable AI recommendations.
+- **Local Machine Learning**: Scikit-Learn Random Forest student drop-out / academic risk prediction classifier (`LOW RISK`, `MEDIUM RISK`, `HIGH RISK`) with actionable AI recommendations.
 - **Reports & Global Search**: CSV export for all datasets, global keyboard-shortcut search (`Ctrl+K`), system audit trail logs, and notification center.
 - **Modern UI/UX**: Dark/Light theme toggle (persisted locally), responsive sidebar, toast alerts, data tables, and custom Canvas charts.
 
@@ -43,19 +43,37 @@ All accounts use their respective role email and default passwords:
 
 ---
 
-## 🚀 Quick Start Guide
+## 📦 Dependency Manifests & Lockfiles
 
-### 1. Installation
+This repository includes both standard dependency manifests and deterministic lockfiles:
+
+- **Manifests**:
+  - `requirements.txt`: Base Python dependency declarations (`Flask`, `Jinja2`, `Werkzeug`, `scikit-learn`, `numpy`, `joblib`, `pytest`)
+  - `pyproject.toml`: Modern PEP-517/518 build system and package metadata specification
+  - `Pipfile`: Pipenv dependency declaration manifest
+
+- **Lockfiles**:
+  - `requirements.lock`: Pinned exact package versions and build tags
+  - `Pipfile.lock`: Standard JSON Pipenv deterministic lockfile with SHA-256 package hashes
+  - `poetry.lock`: Poetry deterministic lockfile specification
+  - `package-lock.json`: Npm package lockfile specification
+
+### 🚀 Installation & Setup Steps
+
 ```bash
-# Clone or navigate to the eduflow directory
+# 1. Clone or navigate to the project directory
 cd eduflow
 
-# Install locked dependencies
+# 2. Install locked dependencies using pip (Recommended)
 pip install -r requirements.lock
-```
 
-### 2. Run the Application
-```bash
+# Alternatively, using Pipenv:
+# pipenv install --deploy
+
+# Alternatively, using Poetry:
+# poetry install
+
+# 3. Run the web application
 python app.py
 ```
 Open your browser and navigate to: **`http://127.0.0.1:5000`**
@@ -66,7 +84,7 @@ Open your browser and navigate to: **`http://127.0.0.1:5000`**
 
 Run the full `pytest` test suite:
 ```bash
-pytest -v
+python -m pytest -v
 ```
 
 ---
