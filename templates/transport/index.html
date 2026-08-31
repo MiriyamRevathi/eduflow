@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Transport Management{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>🚌 Campus Transport & Route Management</h2>
+        <p class="text-muted">Manage fleet vehicles, drivers, route stops, and student bus pass assignments</p>
+    </div>
+</div>
+
+<div class="grid-2 m-b-20">
+    <div class="card">
+        <div class="card-header">
+            <h3>➕ Register New Transport Route</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('transport.new_route') }}">
+                <div class="form-group">
+                    <label>Route Name *</label>
+                    <input type="text" name="route_name" class="form-control" placeholder="North Campus Express (Route A)" required>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Vehicle Number *</label>
+                        <input type="text" name="vehicle_number" class="form-control" placeholder="BUS-102" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehicle Capacity (Seats) *</label>
+                        <input type="number" name="capacity" class="form-control" value="30" min="1" required>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Driver Name</label>
+                        <input type="text" name="driver_name" class="form-control" placeholder="Dominic Toretto">
+                    </div>
+                    <div class="form-group">
+                        <label>Driver Phone</label>
+                        <input type="text" name="driver_phone" class="form-control" placeholder="+1 555-7788">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Monthly Transport Fee ($)</label>
+                    <input type="number" name="monthly_fee" class="form-control" value="150.0" step="10.0">
+                </div>
+                <div class="form-group">
+                    <label>Stops (Comma separated)</label>
+                    <input type="text" name="stops" class="form-control" placeholder="Central Station, Green Valley, Gate 1">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Add Route</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>🚌 Active Transport Routes</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Route & Vehicle</th>
+                            <th>Driver</th>
+                            <th>Capacity</th>
+                            <th>Stops</th>
+                            <th>Assign Student</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in routes %}
+                        <tr>
+                            <td>
+                                <strong>{{ r.route_name }}</strong>
+                                <div class="small-text text-muted">{{ r.vehicle_number }}</div>
+                            </td>
+                            <td>{{ r.driver_name }} ({{ r.driver_phone }})</td>
+                            <td>
+                                <span class="badge {% if r.current_capacity >= r.capacity %}badge-danger{% else %}badge-success{% endif %}">
+                                    {{ r.current_capacity }} / {{ r.capacity }} Seats
+                                </span>
+                            </td>
+                            <td><span class="small-text">{{ r.stops|join(', ') }}</span></td>
+                            <td>
+                                {% if r.current_capacity < r.capacity %}
+                                <form method="POST" action="{{ url_for('transport.assign_student') }}" class="inline-form">
+                                    <input type="hidden" name="route_id" value="{{ r.id }}">
+                                    <select name="student_id" class="form-control form-control-sm inline-select" required>
+                                        <option value="">Select Student...</option>
+                                        {% for s in students %}
+                                        <option value="{{ s.id }}">{{ s.full_name }} ({{ s.student_id }})</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-primary">➕ Assign</button>
+                                </form>
+                                {% else %}
+                                <span class="text-danger small-text">Bus Full</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center p-20 text-muted">No transport routes configured.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
