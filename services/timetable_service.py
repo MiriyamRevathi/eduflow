@@ -1,143 +1,59 @@
 """
-EduFlow ERP Enterprise Service — TimetableService
-Business logic layer managing data operations, auditing, validation, and analytics for Timetable.
+EduFlow ERP Service — TimetableService
+Weekly class schedule, slot booking, and real-time teacher/room conflict detection algorithm.
 """
 from typing import Optional, Dict, Any, List, Tuple
 from repositories.timetable_repository import TimetableRepository
+from repositories.teacher_repository import TeacherRepository
+from repositories.subject_repository import SubjectRepository
 from repositories.audit_repository import AuditRepository
-from validators.timetable_validator import TimetableValidator
-from schemas.timetable_schema import TimetableSchema
-from models.timetable import TimetableModel
-from utils.datetime_utils import DateTimeUtils
-import uuid
 
 class TimetableService:
     def __init__(self):
-        self.repo = TimetableRepository()
+        self.timetable_repo = TimetableRepository()
+        self.repo = self.timetable_repo
+        self.teacher_repo = TeacherRepository()
+        self.subject_repo = SubjectRepository()
         self.audit_repo = AuditRepository()
-        self.validator = TimetableValidator()
-        self.schema = TimetableSchema()
 
-    def get_all(self, status_filter: Optional[str] = None) -> List[Dict[str, Any]]:
-        """Retrieve all records with optional status filtering."""
-        if status_filter:
-            return self.repo.find_by_status(status_filter)
-        return self.repo.find_all()
+    def get_timetable_grid(self, class_name: str = 'CS-101', section: str = 'A') -> Dict[str, Any]:
+        return self.timetable_repo.get_grid_by_class(class_name, section)
 
-    def get_by_id(self, item_id: str) -> Optional[Dict[str, Any]]:
-        """Get single record by primary key."""
-        if not item_id:
-            return None
-        return self.repo.find_by_id(item_id)
+    def add_period(self, data: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]], List[str]]:
+        class_name = data.get('class_name', 'CS-101')
+        section = data.get('section', 'A')
+        day = data.get('day_of_week', 'Monday')
+        start_time = data.get('start_time', '09:00 AM')
+        end_time = data.get('end_time', '10:00 AM')
+        subject_id = data.get('subject_id', '')
+        teacher_id = data.get('teacher_id', '')
+        room = data.get('room_no', '101')
 
-    def get_by_code(self, code: str) -> Optional[Dict[str, Any]]:
-        """Find record by unique code string."""
-        if not code:
-            return None
-        return self.repo.find_by_code(code)
+        has_conflict, conflicts = self.timetable_repo.check_conflicts(day, start_time, end_time, teacher_id, room, class_name, section)
+        if has_conflict:
+            return False, f"Schedule Conflict Detected: {'; '.join(conflicts)}", None, conflicts
 
-    def get_paginated(
-        self,
-        page: int = 1,
-        per_page: int = 10,
-        query: Optional[str] = None,
-        status: Optional[str] = None,
-        sort_by: str = 'id',
-        order: str = 'asc'
-    ) -> Dict[str, Any]:
-        """Fetch paginated records with text query and status filters."""
-        return self.repo.get_paginated_filtered(
-            page=page,
-            per_page=per_page,
-            status=status,
-            query=query,
-            sort_by=sort_by,
-            order=order
-        )
+        count = self.timetable_repo.count() + 1
+        period_data = {
+            'id': f"slot-{count:04d}",
+            'class_name': class_name,
+            'section': section,
+            'day_of_week': day,
+            'start_time': start_time,
+            'end_time': end_time,
+            'subject_id': subject_id,
+            'teacher_id': teacher_id,
+            'room_no': room
+        }
+        created = self.timetable_repo.create(period_data)
+        self.audit_repo.log_action(actor_email, actor_role, 'ADD_TIMETABLE_PERIOD', 'TIMETABLE', f"Scheduled period {day} {start_time} for class {class_name}")
+        return True, "Timetable period scheduled successfully.", created, []
 
-    def create_record(self, payload: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-        """Create new record with schema sanitization and audit logging."""
-        sanitized = self.schema.sanitize_payload(payload)
-        is_valid, errors = self.validator.check_integrity(sanitized)
-        if not is_valid:
-            return False, f"Validation failed: {', '.join(errors)}", None
+    def delete_period(self, period_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
+        period = self.timetable_repo.find_by_id(period_id)
+        if not period:
+            return False, "Timetable period not found."
 
-        if 'id' not in sanitized or not sanitized['id']:
-            sanitized['id'] = f"tim-{uuid.uuid4().hex[:6]}"
-
-        if 'status' not in sanitized:
-            sanitized['status'] = 'ACTIVE'
-
-        sanitized['created_at'] = DateTimeUtils.current_datetime_str()
-        sanitized['updated_at'] = DateTimeUtils.current_datetime_str()
-        sanitized['created_by'] = actor_email
-
-        created = self.repo.create(sanitized)
-        self.audit_repo.log_action(
-            actor_email, actor_role, f"CREATE_TIMETABLE", m_name.upper(),
-            f"Created Timetable record ID: {created['id']}"
-        )
-        return True, f"Timetable record created successfully.", created
-
-    def update_record(self, item_id: str, updates: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-        """Update existing record with validation checks."""
-        existing = self.repo.find_by_id(item_id)
-        if not existing:
-            return False, f"Timetable record not found.", None
-
-        sanitized = self.schema.sanitize_payload(updates)
-        sanitized['updated_at'] = DateTimeUtils.current_datetime_str()
-        sanitized['updated_by'] = actor_email
-
-        updated = self.repo.update(item_id, sanitized)
-        self.audit_repo.log_action(
-            actor_email, actor_role, f"UPDATE_TIMETABLE", m_name.upper(),
-            f"Updated Timetable record ID: {item_id}"
-        )
-        return True, f"Timetable record updated successfully.", updated
-
-    def archive_record(self, item_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
-        """Soft delete/archive record."""
-        existing = self.repo.find_by_id(item_id)
-        if not existing:
-            return False, f"Timetable record not found."
-
-        self.repo.update(item_id, {'status': 'ARCHIVED', 'updated_at': DateTimeUtils.current_datetime_str()})
-        self.audit_repo.log_action(
-            actor_email, actor_role, f"ARCHIVE_TIMETABLE", m_name.upper(),
-            f"Archived Timetable record ID: {item_id}"
-        )
-        return True, f"Timetable record archived successfully."
-
-    def hard_delete_record(self, item_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
-        """Permanently delete record from JSON storage."""
-        existing = self.repo.find_by_id(item_id)
-        if not existing:
-            return False, f"Timetable record not found."
-
-        success = self.repo.delete(item_id)
-        if success:
-            self.audit_repo.log_action(
-                actor_email, actor_role, f"DELETE_TIMETABLE", m_name.upper(),
-                f"Permanently deleted Timetable record ID: {item_id}"
-            )
-            return True, f"Timetable record deleted permanently."
-        return False, "Delete operation failed."
-
-    def get_dashboard_summary(self) -> Dict[str, Any]:
-        """Calculate statistics summary for Timetable module."""
-        return self.repo.get_summary_stats()
-
-    def export_as_csv_rows(self) -> List[List[str]]:
-        """Export collection records as CSV rows."""
-        records = self.get_all()
-        rows = [['ID', 'Name/Title', 'Code', 'Status', 'Created At']]
-        for r in records:
-            rows.append([
-                str(r.get('id', '')),
-                str(r.get('name') or r.get('title') or ''),
-                str(r.get('code', '')),
-                str(r.get('status', '')),
-                str(r.get('created_at', ''))
-            ])
-        return rows
+        self.timetable_repo.delete(period_id)
+        self.audit_repo.log_action(actor_email, actor_role, 'DELETE_TIMETABLE_PERIOD', 'TIMETABLE', f"Deleted period {period_id}")
+        return True, "Timetable period deleted successfully."
