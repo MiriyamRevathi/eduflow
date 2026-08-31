@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Personal Portal{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>👨‍🎓 Student Personal Portal</h2>
+        <p class="text-muted">Welcome, {{ student.full_name if student else 'Student' }}! Class: {{ student.class_name if student else 'CS-101' }}-{{ student.section if student else 'A' }}</p>
+    </div>
+</div>
+
+{% if student %}
+<div class="stats-grid m-b-20">
+    <div class="stat-card">
+        <div class="stat-title">Attendance Rate</div>
+        <div class="stat-value text-success">{{ student.attendance_pct }}%</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Average GPA</div>
+        <div class="stat-value text-primary">{{ student.avg_gpa }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Pending Tuition Fee</div>
+        <div class="stat-value text-danger">${{ "%.2f"|format(student.total_pending_fee) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Issued Library Books</div>
+        <div class="stat-value text-info">{{ student.library_txns|length }}</div>
+    </div>
+</div>
+
+<div class="card m-b-20">
+    <div class="card-header">
+        <h3>⏰ Class Timetable Schedule</h3>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Time Slot</th>
+                        <th>Subject</th>
+                        <th>Instructor</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day, slots in timetable.grid.items() %}
+                        {% for s in slots %}
+                        <tr>
+                            <td><strong>{{ day }}</strong></td>
+                            <td>{{ s.start_time }} - {{ s.end_time }}</td>
+                            <td><strong>{{ s.subject_name }}</strong></td>
+                            <td>{{ s.teacher_name }}</td>
+                            <td><span class="badge badge-info">{{ s.room }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: student_portal.html | Path: templates\portals\student_portal.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}{{% if item %}}Edit Course{{% else %}}Add New Course{{% endif %}}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>{{ 'Edit ' + 'Course' if item else 'Create New ' + 'Course' }}</h2>
+    <p class="text-muted">Configure attributes and master parameters</p>
+</div>
+
+<div class="card card-narrow">
+    <div class="card-header">
+        <h3>Master Form Controls</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('courses.edit', item_id=item.id) if item else url_for('courses.create') }}">
+            <div class="form-group">
+                <label>Primary Name / Display Title *</label>
+                <input type="text" name="name" class="form-control form-control-lg" value="{{ item.name if item else '' }}" required placeholder="Record Display Name">
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Unique Code</label>
+                    <input type="text" name="code" class="form-control" value="{{ item.code if item else '' }}" placeholder="e.g. CODE-2026">
+                </div>
+                <div class="form-group">
+                    <label>Operational Status</label>
+                    <select name="status" class="form-control">
+                        <option value="ACTIVE" {{% if item and item.status == 'ACTIVE' %}}selected{{% endif %}}>ACTIVE</option>
+                        <option value="INACTIVE" {{% if item and item.status == 'INACTIVE' %}}selected{{% endif %}}>INACTIVE</option>
+                        <option value="ARCHIVED" {{% if item and item.status == 'ARCHIVED' %}}selected{{% endif %}}>ARCHIVED</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Department / Category</label>
+                <input type="text" name="department" class="form-control" value="{{ item.department if item else 'General' }}" placeholder="Department">
+            </div>
+
+            <div class="form-group">
+                <label>Description & Notes</label>
+                <textarea name="description" class="form-control" rows="4" placeholder="Enter notes or description...">{{ item.description if item else '' }}</textarea>
+            </div>
+
+            <div class="form-actions m-t-30">
+                <button type="submit" class="btn btn-primary btn-lg">{{ 'Save Record Changes' if item else 'Create Course Record' }}</button>
+                <a href="{{ url_for('courses.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="enterprise-audit-footer text-muted small-text m-t-20 p-10 border-top text-center">
+    <span>EduFlow ERP Enterprise Form: <code>courses/form.html</code></span>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: form.html | Path: templates\courses\form.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

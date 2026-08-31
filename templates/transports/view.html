@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Transport Fleet Details{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📋 Transport Fleet Record Details</h2>
+        <p class="text-muted">Primary Identifier: {{ item.id }}</p>
+    </div>
+    <div class="d-flex gap-10">
+        <a href="{{ url_for('transports.edit', item_id=item.id) }}" class="btn btn-warning">✏️ Edit</a>
+        <a href="{{ url_for('transports.index') }}" class="btn btn-secondary">← Back to List</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>General Information</h3>
+    </div>
+    <div class="card-body">
+        <div class="profile-details-grid">
+            <div class="detail-item">
+                <label>Record ID</label>
+                <div><strong>{{ item.id }}</strong></div>
+            </div>
+            <div class="detail-item">
+                <label>Name / Title</label>
+                <div>{{ item.name or item.title or '-' }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Unique Code</label>
+                <div>{{ item.code or 'N/A' }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Status</label>
+                <div><span class="badge badge-success">{{ item.status }}</span></div>
+            </div>
+            <div class="detail-item">
+                <label>Created Timestamp</label>
+                <div>{{ item.created_at or '-' }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Updated Timestamp</label>
+                <div>{{ item.updated_at or '-' }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE DEEP METADATA BLOCK -->
+<!-- Module: Transport | View: view.html | Schema Version: 1.0.0 -->
+<!-- EduFlow ERP Enterprise System Template Engine -->
+<div class="enterprise-audit-footer text-muted small-text m-t-20 p-10 border-top text-center">
+    <span>System Module: <strong>Transport</strong> | View Template: <code>transports/view.html</code> | Powered by EduFlow ERP Engine</span>
+</div>
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: view.html | Path: templates\transports\view.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

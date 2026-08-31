@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports & Analytics{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📈 ERP Analytics & Data Reports</h2>
+        <p class="text-muted">Export institution datasets to CSV and JSON formats</p>
+    </div>
+</div>
+
+<div class="grid-2 m-b-20">
+    <div class="card">
+        <div class="card-header">
+            <h3>📥 Data Exporters (CSV & JSON)</h3>
+        </div>
+        <div class="card-body">
+            <div class="export-buttons-list">
+                <div class="export-item p-15 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>👨‍🎓 Student Directory Export</strong>
+                        <div class="small-text text-muted">Complete roster with contact, course, and enrollment status</div>
+                    </div>
+                    <a href="{{ url_for('reporting.export_students_csv') }}" class="btn btn-primary btn-sm">📥 Download CSV</a>
+                </div>
+
+                <div class="export-item p-15 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>📅 Attendance History Export</strong>
+                        <div class="small-text text-muted">Daily class attendance logs and status breakdowns</div>
+                    </div>
+                    <a href="{{ url_for('reporting.export_attendance_csv') }}" class="btn btn-primary btn-sm">📥 Download CSV</a>
+                </div>
+
+                <div class="export-item p-15 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>📝 Examination Results Export</strong>
+                        <div class="small-text text-muted">Exam schedules, maximum marks, and published grades</div>
+                    </div>
+                    <a href="{{ url_for('reporting.export_exams_csv') }}" class="btn btn-primary btn-sm">📥 Download CSV</a>
+                </div>
+
+                <div class="export-item p-15 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>💳 Financial & Fee Invoices Export</strong>
+                        <div class="small-text text-muted">Fee invoice ledgers, collections, and pending balances</div>
+                    </div>
+                    <a href="{{ url_for('reporting.export_fees_csv') }}" class="btn btn-primary btn-sm">📥 Download CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>📊 Analytics Distribution</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="analytics-canvas" width="400" height="250"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: index.html | Path: templates\analytics\index.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

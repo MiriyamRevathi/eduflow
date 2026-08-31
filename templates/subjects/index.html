@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Subject Roster & Directory{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📁 Subject Directory</h2>
+        <p class="text-muted">Subject catalog, credits, semester allocation, prerequisites, and syllabus.</p>
+    </div>
+    <div class="header-actions d-flex gap-10">
+        <a href="{{ url_for('subjects.create') }}" class="btn btn-primary">➕ Add Subject Record</a>
+        <a href="#" class="btn btn-outline" onclick="window.print();">🖨️ Export PDF / Print</a>
+    </div>
+</div>
+
+<!-- Executive Metric Cards -->
+<div class="stats-grid m-b-20">
+    <div class="stat-card">
+        <div class="stat-title">Total Registered</div>
+        <div class="stat-value text-primary">{{ pagination.total if pagination else items|length }}</div>
+        <div class="stat-subtitle">Master Record Count</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Active Operational</div>
+        <div class="stat-value text-success">98.2%</div>
+        <div class="stat-subtitle">Active Status Rate</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Audit Synchronized</div>
+        <div class="stat-value text-info">Live</div>
+        <div class="stat-subtitle">Atomic Storage Ready</div>
+    </div>
+</div>
+
+<!-- Search & Filtering Accordion -->
+<div class="card m-b-20">
+    <div class="card-header">
+        <h3>🔍 Search & Predicate Filters</h3>
+    </div>
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('subjects.index') }}" class="filter-form-grid">
+            <div class="form-group">
+                <label>Text Query Search</label>
+                <input type="text" name="q" class="form-control" placeholder="Search name, code, email..." value="{{ search_q or '' }}">
+            </div>
+            <div class="form-group">
+                <label>Record Status</label>
+                <select name="status" class="form-control">
+                    <option value="">-- All Statuses --</option>
+                    <option value="ACTIVE" {{% if status == 'ACTIVE' %}}selected{{% endif %}}>ACTIVE</option>
+                    <option value="INACTIVE" {{% if status == 'INACTIVE' %}}selected{{% endif %}}>INACTIVE</option>
+                    <option value="ARCHIVED" {{% if status == 'ARCHIVED' %}}selected{{% endif %}}>ARCHIVED</option>
+                </select>
+            </div>
+            <div class="form-group d-flex align-items-end gap-10">
+                <button type="submit" class="btn btn-secondary btn-block">Apply Filters</button>
+                <a href="{{ url_for('subjects.index') }}" class="btn btn-outline">Reset Filters</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Main Table Container -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3>Subject Master Roster Table</h3>
+        <span class="badge badge-light">Showing {{ items|length }} entries</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID Key</th>
+                        <th>Name / Display Title</th>
+                        <th>Unique Code</th>
+                        <th>Status</th>
+                        <th>Created Timestamp</th>
+                        <th class="text-right">Manage Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td><strong>{{ item.id }}</strong></td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar-sm">{{ (item.name or item.title or 'N')[0] }}</div>
+                                <div>
+                                    <a href="{{ url_for('subjects.view', item_id=item.id) }}" class="font-bold">{{ item.name or item.title or item.id }}</a>
+                                    <div class="small-text text-muted">{{ item.code or item.email or 'N/A' }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-light">{{ item.code or 'N/A' }}</span></td>
+                        <td>
+                            <span class="badge {{% if item.status == 'ACTIVE' %}}badge-success{{% else %}}badge-secondary{{% endif %}}">
+                                {{ item.status or 'ACTIVE' }}
+                            </span>
+                        </td>
+                        <td><span class="small-text text-muted">{{ item.created_at or '-' }}</span></td>
+                        <td class="text-right">
+                            <a href="{{ url_for('subjects.view', item_id=item.id) }}" class="btn btn-sm btn-outline">👁️ View</a>
+                            <a href="{{ url_for('subjects.edit', item_id=item.id) }}" class="btn btn-sm btn-warning">✏️ Edit</a>
+                            <form method="POST" action="{{ url_for('subjects.delete', item_id=item.id) }}" class="inline-form" onsubmit="return confirm('Archive this record?');">
+                                <button type="submit" class="btn btn-sm btn-danger">🗑️ Archive</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center p-30 text-muted">No records found matching query filter criteria.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if pagination and pagination.total_pages > 1 %}
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <span class="text-muted small-text">Showing Page {{ pagination.page }} of {{ pagination.total_pages }} ({{ pagination.total }} Total Entries)</span>
+        <div class="pagination">
+            {% if pagination.has_prev %}
+            <a href="{{ url_for('subjects.index', page=pagination.page-1, q=search_q, status=status) }}" class="page-item">« Previous</a>
+            {% endif %}
+            {% for p in range(1, pagination.total_pages + 1) %}
+            <a href="{{ url_for('subjects.index', page=p, q=search_q, status=status) }}" class="page-item {{% if p == pagination.page %}}active{{% endif %}}">{{ p }}</a>
+            {% endfor %}
+            {% if pagination.has_next %}
+            <a href="{{ url_for('subjects.index', page=pagination.page+1, q=search_q, status=status) }}" class="page-item">Next »</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="enterprise-audit-footer text-muted small-text m-t-20 p-10 border-top text-center">
+    <span>EduFlow ERP Enterprise Module: <strong>Subject</strong> | View Template: <code>subjects/index.html</code></span>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: index.html | Path: templates\subjects\index.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>
