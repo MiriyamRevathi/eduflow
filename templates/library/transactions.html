@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Issued Book Transactions{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📋 Library Issued Book Transactions</h2>
+        <p class="text-muted">Track open loans, return dates, and late fine assessments</p>
+    </div>
+    <div>
+        <a href="{{ url_for('library.index') }}" class="btn btn-secondary">← Back to Catalog</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>Issued Student</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th>Fine Assessed</th>
+                        <th>Status</th>
+                        <th class="text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td><strong>{{ t.book_title }}</strong></td>
+                        <td>{{ t.student_name }}</td>
+                        <td>{{ t.issue_date }}</td>
+                        <td>{{ t.due_date }}</td>
+                        <td>{{ t.return_date or '-' }}</td>
+                        <td>
+                            {% if t.fine_amount > 0 %}
+                            <span class="text-danger"><strong>${{ "%.2f"|format(t.fine_amount) }}</strong></span>
+                            {% else %}
+                            <span>$0.00</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge {% if t.status == 'RETURNED' %}badge-success{% else %}badge-warning{% endif %}">{{ t.status }}</span>
+                        </td>
+                        <td class="text-right">
+                            {% if t.status == 'ISSUED' %}
+                            <form method="POST" action="{{ url_for('library.return_book', txn_id=t.id) }}" class="inline-form" onsubmit="return confirm('Confirm book return and fine calculation?');">
+                                <button type="submit" class="btn btn-sm btn-success">📥 Process Return</button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted small-text">Completed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="8" class="text-center p-30 text-muted">No circulation transactions recorded.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: transactions.html | Path: templates\library\transactions.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Library Catalog{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📖 Library Catalog & Book Management</h2>
+        <p class="text-muted">Browse book inventory, check availability, and issue books to students</p>
+    </div>
+    <div>
+        <a href="{{ url_for('library.new_book') }}" class="btn btn-primary">➕ Add New Book</a>
+        <a href="{{ url_for('library.transactions') }}" class="btn btn-secondary">📋 Issued Transactions</a>
+    </div>
+</div>
+
+<!-- Search & Category Filters -->
+<div class="card m-b-20">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('library.index') }}" class="filter-form-grid">
+            <div class="form-group">
+                <input type="text" name="q" class="form-control" placeholder="Search book title, author, ISBN..." value="{{ search_q }}">
+            </div>
+            <div class="form-group">
+                <select name="category" class="form-control">
+                    <option value="">-- All Categories --</option>
+                    <option value="Computer Science" {% if category == 'Computer Science' %}selected{% endif %}>Computer Science</option>
+                    <option value="Programming" {% if category == 'Programming' %}selected{% endif %}>Programming</option>
+                    <option value="General" {% if category == 'General' %}selected{% endif %}>General</option>
+                </select>
+            </div>
+            <div class="form-group d-flex gap-10">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+                <a href="{{ url_for('library.index') }}" class="btn btn-outline">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ISBN</th>
+                        <th>Title & Author</th>
+                        <th>Category</th>
+                        <th>Rack No</th>
+                        <th>Copies (Avail / Total)</th>
+                        <th class="text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in books %}
+                    <tr>
+                        <td><strong>{{ b.isbn }}</strong></td>
+                        <td>
+                            <div><strong>{{ b.title }}</strong></div>
+                            <div class="small-text text-muted">by {{ b.author }}</div>
+                        </td>
+                        <td><span class="badge badge-info">{{ b.category }}</span></td>
+                        <td>{{ b.rack_number }}</td>
+                        <td>
+                            <span class="badge {% if b.available_copies > 0 %}badge-success{% else %}badge-danger{% endif %}">
+                                {{ b.available_copies }} / {{ b.total_copies }} Available
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            {% if b.available_copies > 0 %}
+                            <form method="POST" action="{{ url_for('library.issue_book') }}" class="inline-form">
+                                <input type="hidden" name="book_id" value="{{ b.id }}">
+                                <select name="student_id" class="form-control form-control-sm inline-select" required>
+                                    <option value="">Select Student...</option>
+                                    {% for s in students %}
+                                    <option value="{{ s.id }}">{{ s.full_name }} ({{ s.student_id }})</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary">📖 Issue</button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted small-text">Out of Stock</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center p-30 text-muted">No books found in catalog.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: index.html | Path: templates\library\index.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

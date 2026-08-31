@@ -1,0 +1,21 @@
+/* Modals Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-dialog { width: 90%; max-width: 600px; background: var(--bg-card); border-radius: 10px; box-shadow: var(--shadow); overflow: hidden; }
+.modal-lg { max-width: 800px; }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+.modal-body { padding: 20px; max-height: 80vh; overflow-y: auto; }
+.modal-close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+
+.search-results-box { margin-top: 15px; }
+.search-item { padding: 10px 15px; border-bottom: 1px solid var(--border-color); display: block; text-decoration: none; color: var(--text-main); }
+.search-item:hover { background: var(--primary-light); }

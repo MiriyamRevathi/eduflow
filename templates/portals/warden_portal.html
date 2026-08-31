@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Hostel Warden Portal{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>🏢 Hostel Warden Management Portal</h2>
+</div>
+<div class="card">
+    <div class="card-body">
+        <a href="{{ url_for('hostel.index') }}" class="btn btn-primary">Residential Halls & Room Bed Allocations →</a>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: warden_portal.html | Path: templates\portals\warden_portal.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>
