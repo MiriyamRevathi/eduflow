@@ -1,35 +1,38 @@
+"""
+EduFlow ERP Service — EventService
+Campus events, announcements, and activity calendar.
+"""
 from typing import Optional, Dict, Any, List, Tuple
 from repositories.event_repository import EventRepository
 from repositories.audit_repository import AuditRepository
-from utils.datetime_utils import DateTimeUtils
-import uuid
 
 class EventService:
     def __init__(self):
         self.event_repo = EventRepository()
+        self.repo = self.event_repo
         self.audit_repo = AuditRepository()
 
-    def get_all_events((self)) -> List[Dict[str, Any]]:
-        return self.event_repo.find_upcoming()
+    def get_all_events(self) -> List[Dict[str, Any]]:
+        return self.event_repo.find_all()
 
     def create_event(self, data: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
         title = data.get('title', '').strip()
-        description = data.get('description', '').strip()
+        event_date = data.get('event_date', '').strip()
+        if not title or not event_date:
+            return False, "Title and Event Date are required.", None
 
-        if not title:
-            return False, "Title is required.", None
-
+        count = self.event_repo.count() + 1
         event_data = {
-            'id': str(uuid.uuid4()),
+            'id': f"evt-{count:03d}",
             'title': title,
-            'category': data.get('category', 'EVENT'),
-            'target_audience': data.get('target_audience', 'EVERYONE'),
-            'event_date': data.get('event_date', DateTimeUtils.current_date_str()),
-            'location': data.get('location', 'Main Campus'),
-            'description': description,
-            'created_by': actor_email
+            'event_date': event_date,
+            'time': data.get('time', '10:00 AM'),
+            'venue': data.get('venue', 'Main Auditorium'),
+            'target_audience': data.get('target_audience', 'ALL'),
+            'description': data.get('description', ''),
+            'organizer': data.get('organizer', 'Student Affairs'),
+            'status': 'ACTIVE'
         }
-
         created = self.event_repo.create(event_data)
-        self.audit_repo.log_action(actor_email, actor_role, 'CREATE_EVENT', 'EVENTS', f"Published event '{title}' for {event_data['target_audience']}")
-        return True, f"Event '{title}' created successfully.", created
+        self.audit_repo.log_action(actor_email, actor_role, 'CREATE_EVENT', 'EVENT', f"Created campus event {title}")
+        return True, "Event created successfully.", created

@@ -1,10 +1,10 @@
-// Notification center handler
+// In-App Notification Center & Unread Count Poller
 document.addEventListener('DOMContentLoaded', () => {
     const badgeCount = document.getElementById('unread-notification-count');
     const notifContainer = document.getElementById('notification-list-container');
     const markAllBtn = document.getElementById('mark-all-read-btn');
 
-    function loadNotifications() {
+    function fetchNotifications() {
         fetch('/notifications/api/unread')
             .then(res => res.json())
             .then(data => {
@@ -38,16 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(err => console.error('Notification error:', err));
     }
 
-    loadNotifications();
+    fetchNotifications();
 
     if (markAllBtn) {
         markAllBtn.addEventListener('click', (e) => {
             e.preventDefault();
             fetch('/notifications/api/mark-all-read', { method: 'POST' })
                 .then(res => res.json())
-                .then(data => {
-                    loadNotifications();
-                });
+                .then(() => fetchNotifications());
         });
     }
 });

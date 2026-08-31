@@ -1,10 +1,14 @@
+"""
+EduFlow ERP Service — AttendanceService
+Daily & bulk classroom attendance marking and analytics.
+"""
 from typing import Optional, Dict, Any, List, Tuple
 import datetime
+import uuid
 from repositories.attendance_repository import AttendanceRepository
 from repositories.student_repository import StudentRepository
 from repositories.audit_repository import AuditRepository
 from utils.datetime_utils import DateTimeUtils
-import uuid
 
 class AttendanceService:
     def __init__(self):
@@ -18,7 +22,6 @@ class AttendanceService:
 
         students = self.student_repo.find_by_class_and_section(class_name, section)
         attendance_records = self.attendance_repo.find_by_date(date_str)
-        
         att_map = {r['student_id']: r for r in attendance_records}
 
         student_list = []

@@ -10,7 +10,7 @@ class AcademicService:
         self.subject_repo = SubjectRepository()
         self.audit_repo = AuditRepository()
 
-    def get_all_courses_with_subjects((self)) -> List[Dict[str, Any]]:
+    def get_all_courses_with_subjects(self) -> List[Dict[str, Any]]:
         courses = self.course_repo.find_all()
         for c in courses:
             c['subjects'] = self.subject_repo.find_by_course(c['id'])

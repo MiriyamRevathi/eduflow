@@ -1,52 +1,34 @@
+"""
+EduFlow ERP Service — HostelService
+Hostel building management, room bed allocation, and occupant tracking.
+"""
 from typing import Optional, Dict, Any, List, Tuple
 from repositories.hostel_repository import HostelRepository
 from repositories.student_repository import StudentRepository
 from repositories.audit_repository import AuditRepository
 from utils.datetime_utils import DateTimeUtils
+import uuid
 
 class HostelService:
     def __init__(self):
         self.hostel_repo = HostelRepository()
+        self.repo = self.hostel_repo
         self.student_repo = StudentRepository()
         self.audit_repo = AuditRepository()
 
-    def get_hostels_summary(self) -> List[Dict[str, Any]]:
+    def get_all(self, status_filter: Optional[str] = None) -> List[Dict[str, Any]]:
         return self.hostel_repo.find_all()
 
+    def get_hostels_summary(self) -> List[Dict[str, Any]]:
+        return self.hostel_repo.get_hostels_summary()
+
     def allocate_bed(self, hostel_id: str, room_no: str, student_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
-        hostel = self.hostel_repo.find_by_id(hostel_id)
-        if not hostel:
-            return False, "Hostel record not found."
+        if not hostel_id or not room_no or not student_id:
+            return False, "Hostel, Room Number, and Student are required."
+        success, msg = self.hostel_repo.allocate_bed(hostel_id, room_no, student_id)
+        if success:
+            self.audit_repo.log_action(actor_email, actor_role, 'ALLOCATE_HOSTEL_BED', 'HOSTEL', f"Allocated bed in hostel {hostel_id} room {room_no} to student {student_id}")
+        return success, msg
 
-        student = self.student_repo.find_by_id(student_id)
-        if not student:
-            return False, "Student not found."
-
-        rooms = hostel.get('rooms', [])
-        target_room = None
-        for r in rooms:
-            if r.get('room_no') == room_no:
-                target_room = r
-                break
-
-        if not target_room:
-            return False, f"Room {room_no} does not exist in {hostel['name']}."
-
-        if target_room.get('occupied', 0) >= target_room.get('capacity', 2):
-            return False, f"Room {room_no} is fully occupied."
-
-        allocations = target_room.get('allocations', [])
-        for a in allocations:
-            if a.get('student_id') == student_id:
-                return False, "Student is already allocated a bed in this room."
-
-        allocations.append({
-            'student_id': student_id,
-            'student_name': student.get('full_name'),
-            'allocated_at': DateTimeUtils.current_date_str()
-        })
-
-        target_room['occupied'] = len(allocations)
-        self.hostel_repo.update(hostel_id, {'rooms': rooms})
-        self.audit_repo.log_action(actor_email, actor_role, 'ALLOCATE_HOSTEL_BED', 'HOSTEL', f"Allocated bed in room {room_no} of {hostel['name']} to {student['full_name']}")
-        return True, f"Bed in Room {room_no} allocated to {student['full_name']} successfully."
+    def get_dashboard_summary(self) -> Dict[str, Any]:
+        return self.hostel_repo.get_summary_stats()

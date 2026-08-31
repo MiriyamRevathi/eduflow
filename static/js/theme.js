@@ -1,4 +1,4 @@
-// EduFlow Theme Switcher Module
+// EduFlow Theme Switcher & Persistence Handler
 document.addEventListener('DOMContentLoaded', () => {
     const themeBtn = document.getElementById('theme-toggle-btn');
     const htmlElem = document.documentElement;
@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             htmlElem.setAttribute('data-theme', newTheme);
             localStorage.setItem('eduflow_theme', newTheme);
+            
+            const event = new CustomEvent('themeChanged', { detail: { theme: newTheme } });
+            document.dispatchEvent(event);
         });
     }
 });
