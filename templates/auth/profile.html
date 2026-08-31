@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>User Profile & Security</h2>
+        <p class="text-muted">Manage your personal details, access role, and account settings</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="profile-header-meta">
+            <div class="profile-avatar-lg">{{ user.full_name[0] }}</div>
+            <div>
+                <h3 class="m-0">{{ user.full_name }}</h3>
+                <span class="badge badge-primary">{{ user.role }}</span>
+                <span class="badge badge-success">{{ user.status }}</span>
+            </div>
+        </div>
+
+        <div class="profile-details-grid m-t-20">
+            <div class="detail-item">
+                <label>User ID</label>
+                <div>{{ user.id }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Username</label>
+                <div>{{ user.username }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Email Address</label>
+                <div>{{ user.email }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Account Created</label>
+                <div>{{ user.created_at }}</div>
+            </div>
+        </div>
+
+        <div class="m-t-30">
+            <a href="{{ url_for('auth.change_password') }}" class="btn btn-warning">🔑 Change Password</a>
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
