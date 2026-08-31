@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Faculty & Staff Directory{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>👩‍🏫 Faculty & Staff Directory</h2>
+        <p class="text-muted">Manage academic professors, teaching responsibilities, and department assignments</p>
+    </div>
+    <div>
+        <a href="{{ url_for('faculty.new_faculty') }}" class="btn btn-primary">➕ Add Faculty Member</a>
+    </div>
+</div>
+
+<!-- Filter Box -->
+<div class="card m-b-20">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('faculty.index') }}" class="filter-form-grid">
+            <div class="form-group">
+                <input type="text" name="q" class="form-control" placeholder="Search name, faculty ID, email..." value="{{ search_q }}">
+            </div>
+            <div class="form-group">
+                <select name="department" class="form-control">
+                    <option value="">-- All Departments --</option>
+                    <option value="Computer Science" {% if department == 'Computer Science' %}selected{% endif %}>Computer Science</option>
+                    <option value="Electronics" {% if department == 'Electronics' %}selected{% endif %}>Electronics</option>
+                    <option value="Management" {% if department == 'Management' %}selected{% endif %}>Management</option>
+                </select>
+            </div>
+            <div class="form-group d-flex gap-10">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+                <a href="{{ url_for('faculty.index') }}" class="btn btn-outline">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Faculty Table -->
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Faculty ID</th>
+                        <th>Name & Title</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Assigned Subjects</th>
+                        <th>Status</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in teachers %}
+                    <tr>
+                        <td><strong>{{ t.faculty_id }}</strong></td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar-sm bg-primary-light">{{ t.full_name[0] }}</div>
+                                <div>
+                                    <a href="{{ url_for('faculty.view_faculty', teacher_id=t.id) }}" class="font-bold">{{ t.full_name }}</a>
+                                    <div class="small-text text-muted">{{ t.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-info">{{ t.department }}</span></td>
+                        <td>{{ t.designation }}</td>
+                        <td>
+                            {% for s in t.subjects %}
+                            <span class="badge badge-light">{{ s.name }}</span>
+                            {% else %}
+                            <span class="text-muted small-text">None</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <span class="badge {% if t.status == 'ACTIVE' %}badge-success{% else %}badge-secondary{% endif %}">{{ t.status }}</span>
+                        </td>
+                        <td class="text-right">
+                            <a href="{{ url_for('faculty.view_faculty', teacher_id=t.id) }}" class="btn btn-sm btn-outline">👁️ View</a>
+                            <a href="{{ url_for('faculty.edit_faculty', teacher_id=t.id) }}" class="btn btn-sm btn-warning">✏️ Edit</a>
+                            <form method="POST" action="{{ url_for('faculty.delete_faculty', teacher_id=t.id) }}" class="inline-form" onsubmit="return confirm('Deactivate this faculty member?');">
+                                <button type="submit" class="btn btn-sm btn-danger">🗑️ Deactivate</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center p-30 text-muted">No faculty members found matching search parameters.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
