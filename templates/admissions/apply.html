@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Admission Application{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📑 Admission Application Form</h2>
+    <p class="text-muted">Fill in your details to apply for Fall 2026 Academic Programs</p>
+</div>
+
+<div class="card card-narrow">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admissions.apply') }}">
+            <div class="form-group">
+                <label>Applicant Full Name *</label>
+                <input type="text" name="applicant_name" class="form-control" required placeholder="e.g. John Doe">
+            </div>
+            <div class="form-group">
+                <label>Email Address *</label>
+                <input type="email" name="email" class="form-control" required placeholder="john.doe@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="phone" class="form-control" placeholder="+1 555-0192">
+            </div>
+            <div class="form-group">
+                <label>Desired Course / Department *</label>
+                <select name="course_id" class="form-control" required>
+                    <option value="">-- Select Target Course --</option>
+                    {% for c in courses %}
+                    <option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Previous Academic Qualification</label>
+                <input type="text" name="previous_qualification" class="form-control" placeholder="High School / Diploma GPA 3.8">
+            </div>
+            <div class="form-group">
+                <label>Additional Remarks / Statement</label>
+                <textarea name="remarks" class="form-control" rows="3" placeholder="Briefly describe your academic background..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
+                <a href="{{ url_for('admissions.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: apply.html | Path: templates\admissions\apply.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

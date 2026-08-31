@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications Center{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>🔔 Notifications Center</h2>
+        <p class="text-muted">Stay informed on fee deadlines, exam announcements, and leave approvals</p>
+    </div>
+    <div>
+        <button id="page-mark-all-read" class="btn btn-outline">Mark All Read</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Message</th>
+                        <th>Type</th>
+                        <th>Received At</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for n in notifications %}
+                    <tr>
+                        <td><strong>{{ n.title }}</strong></td>
+                        <td>{{ n.message }}</td>
+                        <td><span class="badge badge-info">{{ n.type }}</span></td>
+                        <td><span class="small-text text-muted">{{ n.timestamp }}</span></td>
+                        <td>
+                            <span class="badge {% if n.read %}badge-secondary{% else %}badge-warning{% endif %}">
+                                {% if n.read %}READ{% else %}UNREAD{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center p-30 text-muted">No notifications found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: index.html | Path: templates\notifications\index.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

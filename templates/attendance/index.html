@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Daily Attendance Portal{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📅 Daily Class Attendance</h2>
+        <p class="text-muted">Class {{ overview.class_name }}-{{ overview.section }} | Date: {{ overview.date }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('attendance.mark', date=overview.date, class_name=overview.class_name, section=overview.section) }}" class="btn btn-primary">✏️ Mark / Edit Attendance</a>
+        <a href="{{ url_for('reporting.export_attendance_csv') }}" class="btn btn-outline">📥 Export Report</a>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid m-b-20">
+    <div class="stat-card">
+        <div class="stat-title">Overall Class Attendance</div>
+        <div class="stat-value text-success">{{ overview.stats.attendance_pct }}%</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Present</div>
+        <div class="stat-value text-success">{{ overview.stats.present }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Absent</div>
+        <div class="stat-value text-danger">{{ overview.stats.absent }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Late / Excused</div>
+        <div class="stat-value text-warning">{{ overview.stats.late + overview.stats.excused }}</div>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="card m-b-20">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('attendance.index') }}" class="filter-form-grid">
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" name="date" class="form-control" value="{{ overview.date }}">
+            </div>
+            <div class="form-group">
+                <label>Class</label>
+                <select name="class_name" class="form-control">
+                    <option value="CS-101" {% if overview.class_name == 'CS-101' %}selected{% endif %}>CS-101</option>
+                    <option value="ECE-101" {% if overview.class_name == 'ECE-101' %}selected{% endif %}>ECE-101</option>
+                    <option value="BUS-101" {% if overview.class_name == 'BUS-101' %}selected{% endif %}>BUS-101</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Section</label>
+                <select name="section" class="form-control">
+                    <option value="A" {% if overview.section == 'A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if overview.section == 'B' %}selected{% endif %}>B</option>
+                </select>
+            </div>
+            <div class="form-group d-flex align-items-end">
+                <button type="submit" class="btn btn-secondary btn-block">Load Roster</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Attendance Roster Table -->
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Status Today</th>
+                        <th>Overall %</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for std in overview.students %}
+                    <tr>
+                        <td><strong>{{ std.student_code }}</strong></td>
+                        <td>{{ std.full_name }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if std.status == 'PRESENT' %}badge-success
+                                {% elif std.status == 'LATE' %}badge-warning
+                                {% elif std.status == 'EXCUSED' %}badge-info
+                                {% else %}badge-danger{% endif %}">
+                                {{ std.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar {% if std.overall_pct >= 75 %}bg-success{% else %}bg-danger{% endif %}" style="width: {{ std.overall_pct }}%;"></div>
+                            </div>
+                            <span class="small-text">{{ std.overall_pct }}%</span>
+                        </td>
+                        <td>{{ std.remarks or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center p-30 text-muted">No students found in this class section.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: index.html | Path: templates\attendance\index.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

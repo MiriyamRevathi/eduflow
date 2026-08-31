@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Interactive Weekly Timetable{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>⏰ Weekly Interactive Timetable</h2>
+        <p class="text-muted">Class {{ grid_data.class_name }}-{{ grid_data.section }} Schedule with Real-Time Teacher Conflict Detection</p>
+    </div>
+    <div>
+        <a href="{{ url_for('timetable.new_period') }}" class="btn btn-primary">➕ Schedule Period Slot</a>
+    </div>
+</div>
+
+<!-- Class Selector -->
+<div class="card m-b-20">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('timetable.index') }}" class="filter-form-grid">
+            <div class="form-group">
+                <label>Class</label>
+                <select name="class_name" class="form-control">
+                    <option value="CS-101" {% if grid_data.class_name == 'CS-101' %}selected{% endif %}>CS-101</option>
+                    <option value="ECE-101" {% if grid_data.class_name == 'ECE-101' %}selected{% endif %}>ECE-101</option>
+                    <option value="BUS-101" {% if grid_data.class_name == 'BUS-101' %}selected{% endif %}>BUS-101</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Section</label>
+                <select name="section" class="form-control">
+                    <option value="A" {% if grid_data.section == 'A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if grid_data.section == 'B' %}selected{% endif %}>B</option>
+                </select>
+            </div>
+            <div class="form-group d-flex align-items-end">
+                <button type="submit" class="btn btn-secondary btn-block">Load Timetable Grid</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Grid -->
+<div class="timetable-grid-container">
+    {% for day, slots in grid_data.grid.items() %}
+    <div class="card m-b-15">
+        <div class="card-header bg-primary-light">
+            <h4 class="m-0">📅 {{ day }}</h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Time Period</th>
+                            <th>Subject</th>
+                            <th>Faculty / Teacher</th>
+                            <th>Room / Lab</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in slots %}
+                        <tr>
+                            <td><strong class="text-primary">{{ s.start_time }} - {{ s.end_time }}</strong></td>
+                            <td><strong>{{ s.subject_name }}</strong></td>
+                            <td>{{ s.teacher_name }}</td>
+                            <td><span class="badge badge-info">{{ s.room }}</span></td>
+                            <td class="text-right">
+                                <form method="POST" action="{{ url_for('timetable.delete_period', period_id=s.id) }}" class="inline-form" onsubmit="return confirm('Remove period from timetable?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">🗑️ Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center text-muted p-10">No periods scheduled for {{ day }}.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: index.html | Path: templates\timetable\index.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

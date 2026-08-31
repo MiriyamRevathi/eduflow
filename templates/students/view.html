@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Profile - {{ student.full_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>👨‍🎓 {{ student.full_name }} <span class="badge badge-primary">{{ student.student_id }}</span></h2>
+        <p class="text-muted">{{ student.course.name if student.course else 'Course N/A' }} | Class {{ student.class_name }}-{{ student.section }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('students.edit_student', student_id=student.id) }}" class="btn btn-warning">✏️ Edit Profile</a>
+        <a href="{{ url_for('students.index') }}" class="btn btn-secondary">← Back to List</a>
+    </div>
+</div>
+
+<!-- Profile Overview Bar -->
+<div class="stats-grid m-b-20">
+    <div class="stat-card">
+        <div class="stat-title">Attendance Rate</div>
+        <div class="stat-value {% if student.attendance_pct >= 75 %}text-success{% elif student.attendance_pct >= 60 %}text-warning{% else %}text-danger{% endif %}">{{ student.attendance_pct }}%</div>
+        <div class="stat-subtitle">Min required: 75%</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Average GPA</div>
+        <div class="stat-value text-primary">{{ student.avg_gpa }}</div>
+        <div class="stat-subtitle">Overall Academic Score</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Pending Fees</div>
+        <div class="stat-value {% if student.total_pending_fee > 0 %}text-danger{% else %}text-success{% endif %}">${{ "%.2f"|format(student.total_pending_fee) }}</div>
+        <div class="stat-subtitle">Total Outstanding Balance</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Hostel & Transport</div>
+        <div class="stat-value small-text">
+            {% if student.hostel_info %}Hostel: Room {{ student.hostel_info.room.room_no }}{% else %}No Hostel{% endif %}
+            <br>
+            {% if student.transport_info %}Bus: {{ student.transport_info.vehicle_number }}{% else %}No Transport{% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Profile Interactive Tabs -->
+<div class="card">
+    <div class="card-header p-0">
+        <div class="nav-tabs" id="profile-tabs">
+            <button class="tab-item active" data-tab="tab-overview">Overview & Info</button>
+            <button class="tab-item" data-tab="tab-attendance">Attendance ({{ student.attendance_records|length }})</button>
+            <button class="tab-item" data-tab="tab-exams">Marks & Exams ({{ student.marks|length }})</button>
+            <button class="tab-item" data-tab="tab-fees">Fees & Invoices ({{ student.fees|length }})</button>
+            <button class="tab-item" data-tab="tab-library">Library ({{ student.library_txns|length }})</button>
+            <button class="tab-item" data-tab="tab-leaves">Leaves ({{ student.leaves|length }})</button>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <!-- Tab 1: Overview -->
+        <div class="tab-content active" id="tab-overview">
+            <div class="profile-details-grid">
+                <div class="detail-item">
+                    <label>Student ID</label>
+                    <div>{{ student.student_id }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Email Address</label>
+                    <div>{{ student.email }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Phone Number</label>
+                    <div>{{ student.phone or 'N/A' }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Gender</label>
+                    <div>{{ student.gender }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Date of Birth</label>
+                    <div>{{ student.dob or 'N/A' }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Guardian Name</label>
+                    <div>{{ student.guardian_name or 'N/A' }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Guardian Phone</label>
+                    <div>{{ student.guardian_phone or 'N/A' }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Residential Address</label>
+                    <div>{{ student.address or 'N/A' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Attendance -->
+        <div class="tab-content" id="tab-attendance">
+            <h4>Attendance History</h4>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Class & Sec</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for att in student.attendance_records %}
+                        <tr>
+                            <td>{{ att.date }}</td>
+                            <td>{{ att.class_name }}-{{ att.section }}</td>
+                            <td>
+                                <span class="badge {% if att.status == 'PRESENT' %}badge-success{% elif att.status == 'LATE' %}badge-warning{% else %}badge-danger{% endif %}">{{ att.status }}</span>
+                            </td>
+                            <td>{{ att.remarks or '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted">No attendance logs found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab 3: Exams -->
+        <div class="tab-content" id="tab-exams">
+            <h4>Academic Results & Examination History</h4>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Exam ID</th>
+                            <th>Marks Obtained</th>
+                            <th>Max Marks</th>
+                            <th>Grade</th>
+                            <th>GPA</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in student.marks %}
+                        <tr>
+                            <td>{{ m.exam_id }}</td>
+                            <td><strong>{{ m.marks_obtained }}</strong></td>
+                            <td>{{ m.max_marks }}</td>
+                            <td><span class="badge badge-info">{{ m.grade }}</span></td>
+                            <td>{{ m.gpa }}</td>
+                            <td><span class="badge badge-success">{{ m.status }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center text-muted">No examination results recorded yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab 4: Fees -->
+        <div class="tab-content" id="tab-fees">
+            <h4>Tuition & Campus Fees</h4>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fee Code</th>
+                            <th>Title</th>
+                            <th>Total</th>
+                            <th>Paid</th>
+                            <th>Pending</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in student.fees %}
+                        <tr>
+                            <td>{{ f.fee_code }}</td>
+                            <td>{{ f.title }}</td>
+                            <td>${{ "%.2f"|format(f.net_amount) }}</td>
+                            <td class="text-success">${{ "%.2f"|format(f.paid_amount) }}</td>
+                            <td class="text-danger">${{ "%.2f"|format(f.pending_amount) }}</td>
+                            <td><span class="badge {% if f.status == 'PAID' %}badge-success{% elif f.status == 'PARTIAL' %}badge-warning{% else %}badge-danger{% endif %}">{{ f.status }}</span></td>
+                            <td>
+                                {% if f.pending_amount > 0 %}
+                                <a href="{{ url_for('fees.pay_modal', fee_id=f.id) }}" class="btn btn-sm btn-primary">💳 Pay Fee</a>
+                                {% else %}
+                                <span class="text-muted">Paid</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="7" class="text-center text-muted">No fee invoices assigned.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab 5: Library -->
+        <div class="tab-content" id="tab-library">
+            <h4>Issued Library Books</h4>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Fine</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lib in student.library_txns %}
+                        <tr>
+                            <td>{{ lib.book_title }}</td>
+                            <td>{{ lib.issue_date }}</td>
+                            <td>{{ lib.due_date }}</td>
+                            <td><span class="badge badge-info">{{ lib.status }}</span></td>
+                            <td>${{ "%.2f"|format(lib.fine_amount) }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center text-muted">No library book transactions.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab 6: Leaves -->
+        <div class="tab-content" id="tab-leaves">
+            <h4>Leave Application History</h4>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Leave Type</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in student.leaves %}
+                        <tr>
+                            <td>{{ l.leave_type }}</td>
+                            <td>{{ l.start_date }}</td>
+                            <td>{{ l.end_date }}</td>
+                            <td>{{ l.reason }}</td>
+                            <td><span class="badge badge-success">{{ l.status }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center text-muted">No leave applications submitted.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE DEEP METADATA BLOCK -->
+<!-- Module: Student | View: view.html | Schema Version: 1.0.0 -->
+<!-- EduFlow ERP Enterprise System Template Engine -->
+<div class="enterprise-audit-footer text-muted small-text m-t-20 p-10 border-top text-center">
+    <span>System Module: <strong>Student</strong> | View Template: <code>students/view.html</code> | Powered by EduFlow ERP Engine</span>
+</div>
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: view.html | Path: templates\students\view.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

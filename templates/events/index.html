@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Events & Announcements{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📢 Events & Official Announcements</h2>
+        <p class="text-muted">Broadcast institution news, campus workshops, and academic notices</p>
+    </div>
+</div>
+
+<div class="grid-2 m-b-20">
+    <div class="card">
+        <div class="card-header">
+            <h3>📢 Publish Event / Announcement</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('events.new_event') }}">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" name="title" class="form-control" placeholder="Annual Tech Hackathon 2026" required>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category" class="form-control">
+                            <option value="EVENT">EVENT</option>
+                            <option value="ANNOUNCEMENT">ANNOUNCEMENT</option>
+                            <option value="HOLIDAY">HOLIDAY</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Audience</label>
+                        <select name="target_audience" class="form-control">
+                            <option value="EVERYONE">EVERYONE</option>
+                            <option value="STUDENTS">STUDENTS</option>
+                            <option value="FACULTY">FACULTY</option>
+                            <option value="PARENTS">PARENTS</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Event Date</label>
+                        <input type="date" name="event_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location / Venue</label>
+                        <input type="text" name="location" class="form-control" value="Main Auditorium">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description / Notice Content</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Full announcement details..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Publish Announcement</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>📅 Campus Calendar & Notices</h3>
+        </div>
+        <div class="card-body">
+            {% for e in events %}
+            <div class="event-item-card m-b-15">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="m-0 text-primary">{{ e.title }}</h4>
+                    <span class="badge badge-info">{{ e.category }}</span>
+                </div>
+                <div class="small-text text-muted m-v-5">
+                    🗓️ {{ e.event_date }} | 📍 {{ e.location }} | 👥 Target: <strong>{{ e.target_audience }}</strong>
+                </div>
+                <p class="m-0">{{ e.description }}</p>
+            </div>
+            {% else %}
+            <div class="text-center p-30 text-muted">No announcements posted yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE DEEP METADATA BLOCK -->
+<!-- Module: Event | View: index.html | Schema Version: 1.0.0 -->
+<!-- EduFlow ERP Enterprise System Template Engine -->
+<div class="enterprise-audit-footer text-muted small-text m-t-20 p-10 border-top text-center">
+    <span>System Module: <strong>Event</strong> | View Template: <code>events/index.html</code> | Powered by EduFlow ERP Engine</span>
+</div>
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: index.html | Path: templates\events\index.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

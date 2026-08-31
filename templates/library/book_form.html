@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Add Book{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>➕ Add Book to Catalog</h2>
+</div>
+<div class="card card-narrow">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('library.new_book') }}">
+            <div class="form-group">
+                <label>Book Title *</label>
+                <input type="text" name="title" class="form-control" placeholder="The C Programming Language" required>
+            </div>
+            <div class="form-group">
+                <label>Author(s) *</label>
+                <input type="text" name="author" class="form-control" placeholder="Brian Kernighan & Dennis Ritchie" required>
+            </div>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>ISBN Number</label>
+                    <input type="text" name="isbn" class="form-control" placeholder="978-0131103627">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" name="category" class="form-control" value="Computer Science">
+                </div>
+            </div>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Total Copies</label>
+                    <input type="number" name="total_copies" class="form-control" value="5" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Rack / Shelf Location</label>
+                    <input type="text" name="rack_number" class="form-control" value="CS-01">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Add Book</button>
+                <a href="{{ url_for('library.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: book_form.html | Path: templates\library\book_form.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

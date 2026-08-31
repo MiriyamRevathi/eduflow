@@ -1,3 +1,7 @@
+"""
+EduFlow ERP Service — AuthService
+Authentication, role validation, session security, password hashing, and login audit trails.
+"""
 from typing import Optional, Dict, Any, Tuple
 from repositories.user_repository import UserRepository
 from security.password import PasswordSecurity
@@ -11,17 +15,17 @@ class AuthService:
 
     def authenticate(self, email: str, plain_password: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
         if not email or not plain_password:
-            return False, "Email and password are required.", None
+            return False, "Email and password credentials are required.", None
 
         user = self.user_repo.find_by_email(email)
         if not user:
-            return False, "Invalid email or password.", None
+            return False, "Invalid email address or password.", None
 
         if user.get('status') != 'ACTIVE':
-            return False, "Your account has been deactivated. Please contact administration.", None
+            return False, "Account deactivated. Contact system administrator.", None
 
         if not PasswordSecurity.verify_password(plain_password, user.get('password')):
-            return False, "Invalid email or password.", None
+            return False, "Invalid email address or password.", None
 
         SessionManager.login_user(user)
         self.audit_repo.log_action(user['email'], user['role'], 'USER_LOGIN', 'AUTH', 'User logged in successfully.')
@@ -37,7 +41,7 @@ class AuthService:
     def change_password(self, user_id: str, old_password: str, new_password: str) -> Tuple[bool, str]:
         user = self.user_repo.find_by_id(user_id)
         if not user:
-            return False, "User not found."
+            return False, "User account not found."
 
         if not PasswordSecurity.verify_password(old_password, user.get('password')):
             return False, "Incorrect current password."

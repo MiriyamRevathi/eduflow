@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if student %}Edit Student{% else %}Enroll New Student{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>{% if student %}Edit Student - {{ student.full_name }}{% else %}Enroll New Student{% endif %}</h2>
+    <p class="text-muted">Enter student personal, academic, and guardian information</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" action="{% if student %}{{ url_for('students.edit_student', student_id=student.id) }}{% else %}{{ url_for('students.new_student') }}{% endif %}">
+            <h4 class="form-section-title">1. Personal Information</h4>
+            <div class="form-grid-3">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" name="full_name" class="form-control" value="{{ student.full_name if student else '' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" name="email" class="form-control" value="{{ student.email if student else '' }}" {% if student %}readonly{% else %}required{% endif %}>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" name="phone" class="form-control" value="{{ student.phone if student else '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select name="gender" class="form-control">
+                        <option value="Male" {% if student and student.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if student and student.gender == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if student and student.gender == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" name="dob" class="form-control" value="{{ student.dob if student else '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Enrollment Date</label>
+                    <input type="date" name="enrollment_date" class="form-control" value="{{ student.enrollment_date if student else '2026-01-10' }}">
+                </div>
+            </div>
+
+            <h4 class="form-section-title m-t-20">2. Academic Information</h4>
+            <div class="form-grid-3">
+                <div class="form-group">
+                    <label>Course / Department *</label>
+                    <select name="course_id" class="form-control" required>
+                        <option value="">-- Select Course --</option>
+                        {% for c in courses %}
+                        <option value="{{ c.id }}" {% if student and student.course_id == c.id %}selected{% endif %}>{{ c.name }} ({{ c.code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Class Name</label>
+                    <input type="text" name="class_name" class="form-control" value="{{ student.class_name if student else 'CS-101' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Section</label>
+                    <input type="text" name="section" class="form-control" value="{{ student.section if student else 'A' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Semester</label>
+                    <input type="number" name="semester" class="form-control" value="{{ student.semester if student else 1 }}" min="1" max="8">
+                </div>
+                <div class="form-group">
+                    <label>Academic Year</label>
+                    <input type="text" name="academic_year" class="form-control" value="{{ student.academic_year if student else '2026' }}">
+                </div>
+                {% if student %}
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status" class="form-control">
+                        <option value="ACTIVE" {% if student.status == 'ACTIVE' %}selected{% endif %}>ACTIVE</option>
+                        <option value="ARCHIVED" {% if student.status == 'ARCHIVED' %}selected{% endif %}>ARCHIVED</option>
+                    </select>
+                </div>
+                {% endif %}
+            </div>
+
+            <h4 class="form-section-title m-t-20">3. Guardian & Contact Info</h4>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Guardian Name</label>
+                    <input type="text" name="guardian_name" class="form-control" value="{{ student.guardian_name if student else '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Guardian Phone</label>
+                    <input type="text" name="guardian_phone" class="form-control" value="{{ student.guardian_phone if student else '' }}">
+                </div>
+                <div class="form-group full-width">
+                    <label>Residential Address</label>
+                    <textarea name="address" class="form-control" rows="2">{{ student.address if student else '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="form-actions m-t-30">
+                <button type="submit" class="btn btn-primary">{% if student %}Save Changes{% else %}Create Student{% endif %}</button>
+                <a href="{{ url_for('students.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE DEEP METADATA BLOCK -->
+<!-- Module: Student | View: form.html | Schema Version: 1.0.0 -->
+<!-- EduFlow ERP Enterprise System Template Engine -->
+<div class="enterprise-audit-footer text-muted small-text m-t-20 p-10 border-top text-center">
+    <span>System Module: <strong>Student</strong> | View Template: <code>students/form.html</code> | Powered by EduFlow ERP Engine</span>
+</div>
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: form.html | Path: templates\students\form.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

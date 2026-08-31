@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Receipt - {{ payment.receipt_no }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h2>🧾 Official Fee Payment Receipt</h2>
+    <div>
+        <button onclick="window.print()" class="btn btn-primary">🖨️ Print Receipt</button>
+        <a href="{{ url_for('fees.index') }}" class="btn btn-secondary">← Back to Fees</a>
+    </div>
+</div>
+
+<div class="card card-narrow printable-area">
+    <div class="card-body">
+        <div class="text-center m-b-20">
+            <h2 class="m-0">🎓 EduFlow ERP Institution</h2>
+            <div class="text-muted">Official Fee Collection & Payment Receipt</div>
+            <div class="badge badge-success m-t-5">{{ payment.receipt_no }}</div>
+        </div>
+
+        <hr>
+
+        <div class="profile-details-grid">
+            <div class="detail-item">
+                <label>Receipt Date</label>
+                <div>{{ payment.payment_date }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Payment Code</label>
+                <div>{{ payment.payment_code }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Student Name</label>
+                <div><strong>{{ student.full_name if student else 'N/A' }}</strong></div>
+            </div>
+            <div class="detail-item">
+                <label>Student ID</label>
+                <div>{{ student.student_id if student else 'N/A' }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Fee Title</label>
+                <div>{{ fee.title if fee else 'Tuition Fee' }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Payment Method</label>
+                <div><span class="badge badge-info">{{ payment.payment_method }}</span></div>
+            </div>
+            <div class="detail-item">
+                <label>Transaction Reference</label>
+                <div>{{ payment.transaction_ref }}</div>
+            </div>
+            <div class="detail-item">
+                <label>Amount Paid</label>
+                <div><strong class="text-success" style="font-size: 1.3rem;">${{ "%.2f"|format(payment.amount) }}</strong></div>
+            </div>
+        </div>
+
+        <hr class="m-v-20">
+
+        <div class="d-flex justify-content-between small-text text-muted">
+            <span>Status: Verified & Processed</span>
+            <span>Authorized Signature: EduFlow Accountant</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: receipt.html | Path: templates\fees\receipt.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Admissions Portal{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📑 Admissions & Applicant Management</h2>
+        <p class="text-muted">Review, approve, waitlist, or enroll new student applications</p>
+    </div>
+    <div>
+        <a href="{{ url_for('admissions.apply') }}" class="btn btn-primary">➕ New Admission Application</a>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="card m-b-20">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('admissions.index') }}" class="filter-form-grid">
+            <div class="form-group">
+                <input type="text" name="q" class="form-control" placeholder="Search application no, name, email..." value="{{ search_q }}">
+            </div>
+            <div class="form-group">
+                <select name="status" class="form-control">
+                    <option value="">-- All Statuses --</option>
+                    <option value="APPLIED" {% if status == 'APPLIED' %}selected{% endif %}>APPLIED</option>
+                    <option value="UNDER_REVIEW" {% if status == 'UNDER_REVIEW' %}selected{% endif %}>UNDER_REVIEW</option>
+                    <option value="APPROVED" {% if status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
+                    <option value="REJECTED" {% if status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+                    <option value="WAITLISTED" {% if status == 'WAITLISTED' %}selected{% endif %}>WAITLISTED</option>
+                    <option value="ENROLLED" {% if status == 'ENROLLED' %}selected{% endif %}>ENROLLED</option>
+                </select>
+            </div>
+            <div class="form-group d-flex gap-10">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+                <a href="{{ url_for('admissions.index') }}" class="btn btn-outline">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Application No</th>
+                        <th>Applicant Name</th>
+                        <th>Applied Course</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th class="text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in admissions %}
+                    <tr>
+                        <td><strong>{{ a.application_no }}</strong></td>
+                        <td>
+                            <div>
+                                <a href="{{ url_for('admissions.view_admission', admission_id=a.id) }}" class="font-bold">{{ a.applicant_name }}</a>
+                                <div class="small-text text-muted">{{ a.email }}</div>
+                            </div>
+                        </td>
+                        <td>{{ a.course_name }}</td>
+                        <td>{{ a.applied_date }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if a.status == 'APPROVED' %}badge-success
+                                {% elif a.status == 'ENROLLED' %}badge-primary
+                                {% elif a.status == 'UNDER_REVIEW' %}badge-warning
+                                {% elif a.status == 'REJECTED' %}badge-danger
+                                {% else %}badge-secondary{% endif %}">
+                                {{ a.status }}
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            <a href="{{ url_for('admissions.view_admission', admission_id=a.id) }}" class="btn btn-sm btn-outline">👁️ Review & Action</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center p-30 text-muted">No admission applications found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- ENTERPRISE DEEP METADATA BLOCK -->
+<!-- Module: Admission | View: index.html | Schema Version: 1.0.0 -->
+<!-- EduFlow ERP Enterprise System Template Engine -->
+<div class="enterprise-audit-footer text-muted small-text m-t-20 p-10 border-top text-center">
+    <span>System Module: <strong>Admission</strong> | View Template: <code>admissions/index.html</code> | Powered by EduFlow ERP Engine</span>
+</div>
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: index.html | Path: templates\admissions\index.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>

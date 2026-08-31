@@ -1,0 +1,18 @@
+/* Tables Styles */
+.card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); }
+.card-body { padding: 20px; }
+.card-footer { padding: 12px 20px; border-top: 1px solid var(--border-color); }
+
+.table-responsive { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
+.data-table th { background: var(--bg-main); padding: 12px 16px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+.data-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+.data-table tr:hover { background-color: var(--primary-light); }
+
+.avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; }
+.user-cell { display: flex; align-items: center; gap: 10px; }
+
+.pagination { display: flex; gap: 4px; }
+.page-item { padding: 6px 12px; border: 1px solid var(--border-color); border-radius: 4px; text-decoration: none; color: var(--text-main); font-size: 0.875rem; }
+.page-item.active { background: var(--primary); color: #fff; border-color: var(--primary); }

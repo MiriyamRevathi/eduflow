@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Class Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>✏️ Mark Attendance</h2>
+        <p class="text-muted">Class {{ overview.class_name }}-{{ overview.section }} | Date: {{ overview.date }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('attendance.index', date=overview.date, class_name=overview.class_name, section=overview.section) }}" class="btn btn-secondary">← Back to Overview</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('attendance.mark') }}">
+            <input type="hidden" name="date" value="{{ overview.date }}">
+            <input type="hidden" name="class_name" value="{{ overview.class_name }}">
+            <input type="hidden" name="section" value="{{ overview.section }}">
+
+            <div class="m-b-15 d-flex gap-10">
+                <button type="button" class="btn btn-sm btn-success" onclick="markAll('PRESENT')">All Present</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="markAll('ABSENT')">All Absent</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Status Selection</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for std in overview.students %}
+                        <tr>
+                            <td>
+                                <strong>{{ std.student_code }}</strong>
+                                <input type="hidden" name="student_id" value="{{ std.student_id }}">
+                            </td>
+                            <td>{{ std.full_name }}</td>
+                            <td>
+                                <div class="radio-group-horizontal">
+                                    <label class="radio-label text-success">
+                                        <input type="radio" name="status_{{ std.student_id }}" value="PRESENT" {% if std.status == 'PRESENT' %}checked{% endif %}> Present
+                                    </label>
+                                    <label class="radio-label text-danger">
+                                        <input type="radio" name="status_{{ std.student_id }}" value="ABSENT" {% if std.status == 'ABSENT' %}checked{% endif %}> Absent
+                                    </label>
+                                    <label class="radio-label text-warning">
+                                        <input type="radio" name="status_{{ std.student_id }}" value="LATE" {% if std.status == 'LATE' %}checked{% endif %}> Late
+                                    </label>
+                                    <label class="radio-label text-info">
+                                        <input type="radio" name="status_{{ std.student_id }}" value="EXCUSED" {% if std.status == 'EXCUSED' %}checked{% endif %}> Excused
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="text" name="remarks_{{ std.student_id }}" class="form-control form-control-sm" value="{{ std.remarks }}" placeholder="Optional notes...">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-actions m-t-20">
+                <button type="submit" class="btn btn-primary btn-lg">💾 Save Attendance Records</button>
+                <a href="{{ url_for('attendance.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function markAll(status) {
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            if (radio.value === status) {
+                radio.checked = true;
+            }
+        });
+    }
+</script>
+{% endblock %}
+
+
+<!-- ENTERPRISE EXPANDED FOOTER -->
+<!-- Template Component: mark.html | Path: templates\attendance\mark.html -->
+<!-- EduFlow ERP Full Stack Architecture Container -->
+<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
+    <div class="d-flex justify-content-between align-items-center">
+        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
+        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
+    </div>
+</footer>
