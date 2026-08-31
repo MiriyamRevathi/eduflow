@@ -9,7 +9,7 @@ class EventService:
         self.event_repo = EventRepository()
         self.audit_repo = AuditRepository()
 
-    def get_all_events((self)) -> List[Dict[str, Any]]:
+    def get_all_events(self) -> List[Dict[str, Any]]:
         return self.event_repo.find_upcoming()
 
     def create_event(self, data: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
