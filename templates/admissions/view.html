@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Review Application - {{ admission.application_no }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📑 Application {{ admission.application_no }}</h2>
+        <p class="text-muted">Applicant: {{ admission.applicant_name }} | Submitted on {{ admission.applied_date }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('admissions.index') }}" class="btn btn-secondary">← Back to List</a>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3>Applicant Details</h3>
+        </div>
+        <div class="card-body">
+            <div class="profile-details-grid">
+                <div class="detail-item">
+                    <label>Application No</label>
+                    <div><strong>{{ admission.application_no }}</strong></div>
+                </div>
+                <div class="detail-item">
+                    <label>Full Name</label>
+                    <div>{{ admission.applicant_name }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Email</label>
+                    <div>{{ admission.email }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Phone</label>
+                    <div>{{ admission.phone or 'N/A' }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Target Course</label>
+                    <div>{{ admission.course.name if admission.course else 'N/A' }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Qualification</label>
+                    <div>{{ admission.previous_qualification or 'N/A' }}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Current Status</label>
+                    <div>
+                        <span class="badge 
+                            {% if admission.status == 'APPROVED' %}badge-success
+                            {% elif admission.status == 'ENROLLED' %}badge-primary
+                            {% elif admission.status == 'UNDER_REVIEW' %}badge-warning
+                            {% elif admission.status == 'REJECTED' %}badge-danger
+                            {% else %}badge-secondary{% endif %}">
+                            {{ admission.status }}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <label>Remarks</label>
+                    <div>{{ admission.remarks or '-' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Review & Action Workflow</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admissions.update_status', admission_id=admission.id) }}">
+                <div class="form-group">
+                    <label>Update Application Status</label>
+                    <select name="status" class="form-control" required>
+                        <option value="APPLIED" {% if admission.status == 'APPLIED' %}selected{% endif %}>APPLIED</option>
+                        <option value="UNDER_REVIEW" {% if admission.status == 'UNDER_REVIEW' %}selected{% endif %}>UNDER_REVIEW</option>
+                        <option value="APPROVED" {% if admission.status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
+                        <option value="WAITLISTED" {% if admission.status == 'WAITLISTED' %}selected{% endif %}>WAITLISTED</option>
+                        <option value="REJECTED" {% if admission.status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Review Notes / Remarks</label>
+                    <textarea name="remarks" class="form-control" rows="3">{{ admission.remarks or '' }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-warning btn-block">Save Status & Remarks</button>
+            </form>
+
+            <hr class="m-v-20">
+
+            <h4>🎓 Convert & Enroll Applicant</h4>
+            <p class="small-text text-muted">Enrolling converts this applicant into an active student, generates a Student ID, and provisions a student portal user account.</p>
+            
+            {% if admission.status == 'ENROLLED' %}
+            <div class="alert alert-success">Applicant is already enrolled!</div>
+            {% else %}
+            <form method="POST" action="{{ url_for('admissions.enroll_applicant', admission_id=admission.id) }}" onsubmit="return confirm('Enroll this applicant into active student roster?');">
+                <button type="submit" class="btn btn-success btn-block btn-lg">🎓 Enroll as Active Student</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
