@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Enter Marks - {{ exam.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>📝 Enter Student Marks - {{ exam.title }}</h2>
+        <p class="text-muted">Exam ID: {{ exam.exam_id }} | Max Marks: {{ exam.max_marks }} | Pass Marks: {{ exam.pass_marks }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('exams.index') }}" class="btn btn-secondary">← Back to Exams</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('exams.enter_marks', exam_id=exam.id) }}">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Marks Obtained (Out of {{ exam.max_marks }})</th>
+                            <th>Existing Grade / Status</th>
+                            <th>Teacher Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for std in students %}
+                        {% set existing = marks_map.get(std.id) %}
+                        <tr>
+                            <td>
+                                <strong>{{ std.student_id }}</strong>
+                                <input type="hidden" name="student_id" value="{{ std.id }}">
+                            </td>
+                            <td>{{ std.full_name }}</td>
+                            <td>
+                                <input type="number" name="marks_{{ std.id }}" class="form-control form-control-sm" value="{{ existing.marks_obtained if existing else 0 }}" min="0" max="{{ exam.max_marks }}" step="0.5" required>
+                            </td>
+                            <td>
+                                {% if existing %}
+                                <span class="badge badge-info">{{ existing.grade }} (GPA: {{ existing.gpa }})</span>
+                                <span class="badge {% if existing.status == 'PASSED' %}badge-success{% else %}badge-danger{% endif %}">{{ existing.status }}</span>
+                                {% else %}
+                                <span class="text-muted small-text">Not Graded</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <input type="text" name="remarks_{{ std.id }}" class="form-control form-control-sm" value="{{ existing.remarks if existing else '' }}" placeholder="Feedback notes...">
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center text-muted p-30">No students enrolled in this course.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-actions m-t-20">
+                <button type="submit" class="btn btn-primary btn-lg">💾 Save & Recalculate Grades</button>
+                <a href="{{ url_for('exams.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Schedule Exam{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>➕ Schedule New Examination</h2>
+</div>
+<div class="card card-narrow">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('exams.new_exam') }}">
+            <div class="form-group">
+                <label>Examination Title *</label>
+                <input type="text" name="title" class="form-control" placeholder="Mid-Term Examination Fall 2026" required>
+            </div>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Course *</label>
+                    <select name="course_id" class="form-control" required>
+                        <option value="">-- Select Course --</option>
+                        {% for c in courses %}
+                        <option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subject *</label>
+                    <select name="subject_id" class="form-control" required>
+                        <option value="">-- Select Subject --</option>
+                        {% for s in subjects %}
+                        <option value="{{ s.id }}">{{ s.name }} ({{ s.code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-grid-3">
+                <div class="form-group">
+                    <label>Exam Date *</label>
+                    <input type="date" name="exam_date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Start Time *</label>
+                    <input type="time" name="start_time" class="form-control" value="09:00" required>
+                </div>
+                <div class="form-group">
+                    <label>End Time *</label>
+                    <input type="time" name="end_time" class="form-control" value="12:00" required>
+                </div>
+            </div>
+            <div class="form-grid-3">
+                <div class="form-group">
+                    <label>Room / Hall</label>
+                    <input type="text" name="room" class="form-control" value="Auditorium A">
+                </div>
+                <div class="form-group">
+                    <label>Max Marks</label>
+                    <input type="number" name="max_marks" class="form-control" value="100">
+                </div>
+                <div class="form-group">
+                    <label>Pass Marks</label>
+                    <input type="number" name="pass_marks" class="form-control" value="40">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Schedule Examination</button>
+                <a href="{{ url_for('exams.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
