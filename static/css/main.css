@@ -1,0 +1,100 @@
+/* EduFlow ERP Main Layout Styles */
+:root {
+    --bg-main: #f4f6f9;
+    --bg-card: #ffffff;
+    --text-main: #212529;
+    --text-muted: #6c757d;
+    --border-color: #e9ecef;
+    --primary: #4361ee;
+    --primary-hover: #3a0ca3;
+    --primary-light: #eef2ff;
+    --success: #2ec4b6;
+    --warning: #ff9f1c;
+    --danger: #e71d36;
+    --info: #4cc9f0;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+[data-theme="dark"] {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --primary-light: #1e1b4b;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body.eduflow-app {
+    font-family: var(--font-family);
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Top Nav Header */
+.top-nav {
+    height: 60px;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.nav-left, .nav-right { display: flex; align-items: center; gap: 15px; }
+.brand-link { display: flex; align-items: center; gap: 8px; text-decoration: none; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+.brand-badge { background: var(--primary); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; }
+
+/* Global Search Bar Trigger */
+.global-search-trigger {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    cursor: pointer;
+    width: 380px;
+}
+.global-search-trigger kbd { background: var(--bg-card); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border-color); }
+
+/* App Layout Grid */
+.app-layout { display: flex; flex: 1; }
+.app-main { flex: 1; padding: 25px; overflow-y: auto; }
+.content-wrapper { max-width: 1400px; margin: 0 auto; }
+
+/* Utilities */
+.d-flex { display: flex; }
+.justify-content-between { justify-content: space-between; }
+.align-items-center { align-items: center; }
+.m-b-20 { margin-bottom: 20px; }
+.m-b-15 { margin-bottom: 15px; }
+.m-t-20 { margin-top: 20px; }
+.m-t-30 { margin-top: 30px; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.text-primary { color: var(--primary); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-danger { color: var(--danger); }
+.font-bold { font-weight: 600; }
+.small-text { font-size: 0.8125rem; }
+
+/* Toast Messages */
+.toast-container { position: fixed; top: 70px; right: 20px; z-index: 1050; }
+.toast { background: var(--bg-card); border-left: 4px solid var(--primary); padding: 12px 20px; margin-bottom: 10px; border-radius: 6px; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between; min-width: 300px; }
+.toast-success { border-color: var(--success); }
+.toast-danger { border-color: var(--danger); }
+.toast-warning { border-color: var(--warning); }
+.toast-close-btn { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-muted); }

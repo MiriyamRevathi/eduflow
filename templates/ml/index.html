@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}ML Academic Risk Intelligence{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2>🤖 ML Student Academic Risk Prediction System</h2>
+        <p class="text-muted">Local Scikit-Learn Machine Learning classifier predicting dropout & performance risks</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>🎯 Student Risk Classification Matrix</h3>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Student Name & ID</th>
+                        <th>Attendance Rate</th>
+                        <th>Exam Score Avg</th>
+                        <th>Assignment Rate</th>
+                        <th>Predicted Risk Category</th>
+                        <th>Confidence Score</th>
+                        <th>AI Recommendations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in predictions %}
+                    <tr>
+                        <td>
+                            <strong>{{ p.student.full_name }}</strong>
+                            <div class="small-text text-muted">{{ p.student.student_id }}</div>
+                        </td>
+                        <td>
+                            <span class="{% if p.features.attendance_pct >= 75 %}text-success{% else %}text-danger font-bold{% endif %}">
+                                {{ p.features.attendance_pct }}%
+                            </span>
+                        </td>
+                        <td>{{ "%.1f"|format(p.features.marks_pct) }}%</td>
+                        <td>{{ "%.1f"|format(p.features.assignment_pct) }}%</td>
+                        <td>
+                            <span class="badge 
+                                {% if p.risk_category == 'HIGH RISK' %}badge-danger
+                                {% elif p.risk_category == 'MEDIUM RISK' %}badge-warning
+                                {% else %}badge-success{% endif %}">
+                                {{ p.risk_category }}
+                            </span>
+                        </td>
+                        <td><strong>{{ p.risk_score }}%</strong></td>
+                        <td>
+                            <ul class="m-0 p-l-15 small-text">
+                                {% for r in p.recommendations %}
+                                <li>{{ r }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" class="text-center p-30 text-muted">No student predictions generated.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
