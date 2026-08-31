@@ -1,18 +1,21 @@
-// Main Application JS entry point
+// EduFlow ERP Main Application Initialization & Global Shortcut Handler
 document.addEventListener('DOMContentLoaded', () => {
-    // Sidebar Toggle
     const sidebarToggle = document.getElementById('sidebar-toggle-btn');
     const sidebar = document.getElementById('app-sidebar');
 
     if (sidebarToggle && sidebar) {
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
+            localStorage.setItem('eduflow_sidebar_state', sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded');
         });
+        const savedState = localStorage.getItem('eduflow_sidebar_state');
+        if (savedState === 'collapsed') {
+            sidebar.classList.add('collapsed');
+        }
     }
 
     console.log("EduFlow ERP Enterprise Application JS Engine Initialized.");
 
-    // Keyboard Shortcuts Helper
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
@@ -20,17 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Form Input Focus Effects
     document.querySelectorAll('.form-control').forEach(input => {
         input.addEventListener('focus', () => {
-            input.parentElement.classList.add('input-focused');
+            if (input.parentElement) input.parentElement.classList.add('input-focused');
         });
         input.addEventListener('blur', () => {
-            input.parentElement.classList.remove('input-focused');
+            if (input.parentElement) input.parentElement.classList.remove('input-focused');
         });
     });
 
-    // Confirmation Action Buttons
     document.querySelectorAll('[data-confirm]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const msg = btn.getAttribute('data-confirm') || 'Are you sure you want to perform this action?';
@@ -40,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Auto-dismiss alert toasts after 5 seconds
     setTimeout(() => {
         document.querySelectorAll('.toast').forEach(toast => {
             toast.style.opacity = '0';

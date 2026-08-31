@@ -97,5 +97,14 @@
     "entity": "AUTH",
     "details": "User logged in successfully.",
     "timestamp": "2026-08-31 12:12:53"
+  },
+  {
+    "id": "a1286fff-b6e9-48f5-b2f9-841455eb348d",
+    "user": "admin@eduflow.local",
+    "role": "SUPER_ADMIN",
+    "action": "USER_LOGIN",
+    "entity": "AUTH",
+    "details": "User logged in successfully.",
+    "timestamp": "2026-08-31 12:22:37"
   }
 ]

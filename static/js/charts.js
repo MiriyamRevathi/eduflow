@@ -1,6 +1,5 @@
-// Vanilla HTML5 Canvas Charting Engine for EduFlow ERP
+// HTML5 Canvas Chart Engine for EduFlow ERP Analytics
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Dashboard Trend Canvas
     const dashboardCanvas = document.getElementById('dashboard-trend-canvas');
     if (dashboardCanvas && dashboardCanvas.getContext) {
         const ctx = dashboardCanvas.getContext('2d');
@@ -8,10 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const height = dashboardCanvas.height;
 
         ctx.clearRect(0, 0, width, height);
-
-        // Draw background grid lines
         ctx.strokeStyle = '#e9ecef';
         ctx.lineWidth = 1;
+
         for (let y = 30; y < height - 30; y += 40) {
             ctx.beginPath();
             ctx.moveTo(40, y);
@@ -19,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.stroke();
         }
 
-        // Attendance Trend Line Data
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const values = [85, 92, 88, 95, 91, 96];
 
@@ -34,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (idx === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
 
-            // Draw point dots
             ctx.fillStyle = '#4361ee';
             ctx.beginPath();
             ctx.arc(x, y, 5, 0, Math.PI * 2);
@@ -42,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         ctx.stroke();
 
-        // Draw day labels
         ctx.fillStyle = '#6c757d';
         ctx.font = '12px sans-serif';
         days.forEach((day, idx) => {
@@ -51,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Analytics Canvas
     const analyticsCanvas = document.getElementById('analytics-canvas');
     if (analyticsCanvas && analyticsCanvas.getContext) {
         const ctx = analyticsCanvas.getContext('2d');

@@ -1,4 +1,4 @@
-// Global search autocomplete handler
+// Global Search Autocomplete API Handler
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('global-search-input');
     const resultsContainer = document.getElementById('global-search-results');
@@ -7,15 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let debounceTimer;
         searchInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
-            const q = searchInput.value.trim();
+            const query = searchInput.value.trim();
 
-            if (q.length < 2) {
-                resultsContainer.innerHTML = '<div class="search-hint">Start typing to search across all EduFlow collections...</div>';
+            if (query.length < 2) {
+                resultsContainer.innerHTML = '<div class="search-hint">Type to search across all EduFlow collections...</div>';
                 return;
             }
 
             debounceTimer = setTimeout(() => {
-                fetch(`/search/api?q=${encodeURIComponent(q)}`)
+                fetch(`/search/api?q=${encodeURIComponent(query)}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data.results && data.results.length > 0) {
@@ -34,9 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             resultsContainer.innerHTML = '<div class="search-hint text-muted">No records found matching query.</div>';
                         }
                     })
-                    .catch(err => {
-                        console.error('Search API error:', err);
-                    });
+                    .catch(err => console.error('Search API error:', err));
             }, 250);
         });
     }

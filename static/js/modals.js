@@ -1,6 +1,5 @@
-// Modal handling module
+// Modal dialogs and backdrop interaction controller
 document.addEventListener('DOMContentLoaded', () => {
-    // Open Global Search Modal via trigger or Ctrl+K
     const searchTrigger = document.getElementById('open-global-search');
     const searchModal = document.getElementById('global-search-modal');
     const closeSearchBtn = document.getElementById('close-search-modal');
@@ -19,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Ctrl+K Shortcut
     document.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
@@ -32,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Close on overlay click
     window.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal-overlay')) {
             e.target.classList.remove('active');
