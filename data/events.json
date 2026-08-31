@@ -1,0 +1,22 @@
+[
+  {
+    "id": "evt-001",
+    "title": "Annual EduFlow Tech Hackathon 2026",
+    "category": "EVENT",
+    "target_audience": "EVERYONE",
+    "event_date": "2026-10-12",
+    "location": "Main Auditorium",
+    "description": "48-hour competitive innovation hackathon open to all faculties and students.",
+    "created_by": "Super Admin"
+  },
+  {
+    "id": "evt-002",
+    "title": "Fall Semester Mid-Term Examination Schedule",
+    "category": "ANNOUNCEMENT",
+    "target_audience": "STUDENTS",
+    "event_date": "2026-09-15",
+    "location": "Exam Halls",
+    "description": "Official timetable published. Please inspect your individual portal for room seating.",
+    "created_by": "School Admin"
+  }
+]

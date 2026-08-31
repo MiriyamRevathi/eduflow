@@ -1,0 +1,29 @@
+[
+  {
+    "id": "crs-001",
+    "code": "CS-101",
+    "name": "Computer Science & Engineering",
+    "department": "Computer Science",
+    "duration_years": 4,
+    "total_semesters": 8,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "crs-002",
+    "code": "ECE-101",
+    "name": "Electronics & Communication",
+    "department": "Electronics",
+    "duration_years": 4,
+    "total_semesters": 8,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "crs-003",
+    "code": "BUS-101",
+    "name": "Business Administration",
+    "department": "Management",
+    "duration_years": 3,
+    "total_semesters": 6,
+    "status": "ACTIVE"
+  }
+]

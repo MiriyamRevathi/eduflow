@@ -1,0 +1,33 @@
+[
+  {
+    "id": "asg-001",
+    "title": "Flask Web Architecture Project",
+    "course_id": "crs-001",
+    "subject_id": "sbj-001",
+    "teacher_id": "tch-001",
+    "due_date": "2026-09-10",
+    "description": "Build a multi-tier Flask web app with clean repository architecture.",
+    "max_points": 100,
+    "submissions": [
+      {
+        "student_id": "std-001",
+        "submitted_at": "2026-08-28 14:00:00",
+        "content": "https://github.com/demo/flask-app",
+        "status": "GRADED",
+        "grade": 95,
+        "feedback": "Outstanding code structure!"
+      }
+    ]
+  },
+  {
+    "id": "asg-002",
+    "title": "SQL Query Optimization Problem Set",
+    "course_id": "crs-001",
+    "subject_id": "sbj-002",
+    "teacher_id": "tch-001",
+    "due_date": "2026-09-15",
+    "description": "Optimize indexing and join strategies for 1M records.",
+    "max_points": 50,
+    "submissions": []
+  }
+]

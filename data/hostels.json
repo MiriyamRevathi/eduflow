@@ -1,0 +1,55 @@
+[
+  {
+    "id": "hst-001",
+    "name": "Newton Hall (Boys)",
+    "type": "BOYS",
+    "warden_name": "Argus Filch",
+    "warden_phone": "+1 555-9090",
+    "total_rooms": 20,
+    "rooms": [
+      {
+        "room_no": "101",
+        "capacity": 2,
+        "occupied": 1,
+        "fee_per_term": 1200.0,
+        "allocations": [
+          {
+            "student_id": "std-001",
+            "student_name": "Alexander Wright",
+            "allocated_at": "2026-01-15"
+          }
+        ]
+      },
+      {
+        "room_no": "102",
+        "capacity": 2,
+        "occupied": 0,
+        "fee_per_term": 1200.0,
+        "allocations": []
+      }
+    ]
+  },
+  {
+    "id": "hst-002",
+    "name": "Curie House (Girls)",
+    "type": "GIRLS",
+    "warden_name": "Minerva McGonagall",
+    "warden_phone": "+1 555-9091",
+    "total_rooms": 20,
+    "rooms": [
+      {
+        "room_no": "201",
+        "capacity": 2,
+        "occupied": 1,
+        "fee_per_term": 1200.0,
+        "allocations": [
+          {
+            "student_id": "std-002",
+            "student_name": "Beatrix Potter",
+            "allocated_at": "2026-01-16"
+          }
+        ]
+      }
+    ]
+  }
+]

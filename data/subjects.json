@@ -1,0 +1,34 @@
+[
+  {
+    "id": "sbj-001",
+    "code": "CS101-PY",
+    "name": "Python Programming & Data Structures",
+    "course_id": "crs-001",
+    "credits": 4,
+    "semester": 1
+  },
+  {
+    "id": "sbj-002",
+    "code": "CS102-DB",
+    "name": "Database Systems & Architecture",
+    "course_id": "crs-001",
+    "credits": 3,
+    "semester": 1
+  },
+  {
+    "id": "sbj-003",
+    "code": "CS103-MATH",
+    "name": "Discrete Mathematics",
+    "course_id": "crs-001",
+    "credits": 4,
+    "semester": 1
+  },
+  {
+    "id": "sbj-004",
+    "code": "ECE101-CKT",
+    "name": "Circuit Theory",
+    "course_id": "crs-002",
+    "credits": 4,
+    "semester": 1
+  }
+]

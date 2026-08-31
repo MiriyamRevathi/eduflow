@@ -1,0 +1,14 @@
+[
+  {
+    "id": "pay-001",
+    "payment_code": "PAY-2026-00001",
+    "fee_id": "fee-001",
+    "student_id": "std-001",
+    "amount": 1500.0,
+    "payment_method": "CARD",
+    "transaction_ref": "TXN-998811",
+    "payment_date": "2026-08-15 11:30:00",
+    "receipt_no": "RCP-2026-001",
+    "remarks": "Initial installment paid via Card simulation"
+  }
+]

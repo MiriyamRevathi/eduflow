@@ -1,0 +1,14 @@
+[
+  {
+    "id": "prn-001",
+    "user_id": "usr-010",
+    "full_name": "Jonathan Wright",
+    "email": "parent@eduflow.local",
+    "phone": "+1 555-0909",
+    "occupation": "Senior Engineer",
+    "student_ids": [
+      "std-001"
+    ],
+    "address": "124 Innovation Way, Tech City"
+  }
+]

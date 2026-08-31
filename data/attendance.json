@@ -1,0 +1,272 @@
+[
+  {
+    "id": "259e57c3-ca9f-4b84-a837-90a6f4ac04ae",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-21",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "22fa9eb8-0759-4e89-9a2c-dfc8f7f32869",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-21",
+    "status": "ABSENT",
+    "remarks": "Sick leave"
+  },
+  {
+    "id": "0b31033d-ebff-4262-9caa-1648e0ead373",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-21",
+    "status": "PRESENT",
+    "remarks": "Normal"
+  },
+  {
+    "id": "db7fa25b-0048-4dca-9402-d1853b6f813f",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-22",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "c06e8352-17a3-4c18-9f30-149321e7115d",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-22",
+    "status": "PRESENT",
+    "remarks": "Regular"
+  },
+  {
+    "id": "9d930957-9c50-47b4-ab87-73e3fc473a2b",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-22",
+    "status": "LATE",
+    "remarks": "Normal"
+  },
+  {
+    "id": "785c3688-a3bd-4a04-9499-3e4bc55973e3",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-23",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "6927e011-11c3-4210-b281-ac921aebe8e0",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-23",
+    "status": "PRESENT",
+    "remarks": "Regular"
+  },
+  {
+    "id": "d663f47c-a543-450c-9b3c-01083fb3897d",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-23",
+    "status": "PRESENT",
+    "remarks": "Normal"
+  },
+  {
+    "id": "1ab909d6-ca5c-4e6e-8a4e-a65fc1a87a78",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-24",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "fe86a6da-62c0-4869-9f54-4b5cdaa7f978",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-24",
+    "status": "ABSENT",
+    "remarks": "Sick leave"
+  },
+  {
+    "id": "e06733bd-3d0e-40b6-b0fa-755c1654465e",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-24",
+    "status": "LATE",
+    "remarks": "Normal"
+  },
+  {
+    "id": "f8318253-8c68-47a5-8620-02fa6cee6c67",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-25",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "6b8c250a-ad6b-4980-b22d-b0b31e4d09cf",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-25",
+    "status": "PRESENT",
+    "remarks": "Regular"
+  },
+  {
+    "id": "a84f8a44-3d0e-47ce-8f0a-beeb6e985456",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-25",
+    "status": "PRESENT",
+    "remarks": "Normal"
+  },
+  {
+    "id": "4bcc07e1-9f3a-4ded-bcd9-75006e3a2048",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-26",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "016e33cd-fdef-4f3a-91d4-3944e3a8a8d2",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-26",
+    "status": "PRESENT",
+    "remarks": "Regular"
+  },
+  {
+    "id": "d2e18752-1637-418a-8705-c9211c956886",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-26",
+    "status": "LATE",
+    "remarks": "Normal"
+  },
+  {
+    "id": "7e13482e-0a73-4a3b-84a6-f8cdf2f8d308",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-27",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "d91fbd84-a12a-4f95-9796-68f540630c74",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-27",
+    "status": "ABSENT",
+    "remarks": "Sick leave"
+  },
+  {
+    "id": "44faf814-0bbe-4a57-b099-065bee4f8684",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-27",
+    "status": "PRESENT",
+    "remarks": "Normal"
+  },
+  {
+    "id": "6da990c9-0893-4a8c-831d-3ec70363e579",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-28",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "72d06e92-b8cc-4a68-a07c-d012e2289773",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-28",
+    "status": "PRESENT",
+    "remarks": "Regular"
+  },
+  {
+    "id": "c7f6740a-1c91-4c90-9fea-bd8ae080bfce",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-28",
+    "status": "LATE",
+    "remarks": "Normal"
+  },
+  {
+    "id": "b607c79e-f7b1-45a7-81b7-1d4c41a41153",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-29",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "ba885180-4d93-4702-a226-1802431eecb1",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-29",
+    "status": "PRESENT",
+    "remarks": "Regular"
+  },
+  {
+    "id": "71326a37-d58f-4bbf-b8d2-dfc382eafc29",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-29",
+    "status": "PRESENT",
+    "remarks": "Normal"
+  },
+  {
+    "id": "d87640e8-5da1-4538-8e25-c423db29e301",
+    "student_id": "std-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-30",
+    "status": "PRESENT",
+    "remarks": "On time"
+  },
+  {
+    "id": "f841875e-9b7c-4bd1-97db-ad914285aa69",
+    "student_id": "std-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "date": "2026-08-30",
+    "status": "ABSENT",
+    "remarks": "Sick leave"
+  },
+  {
+    "id": "5aa91746-a95c-412d-a2f4-b386b3a906a8",
+    "student_id": "std-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "date": "2026-08-30",
+    "status": "LATE",
+    "remarks": "Normal"
+  }
+]

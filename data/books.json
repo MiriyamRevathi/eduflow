@@ -1,0 +1,32 @@
+[
+  {
+    "id": "bk-001",
+    "isbn": "978-0131103627",
+    "title": "The C Programming Language",
+    "author": "Brian Kernighan & Dennis Ritchie",
+    "category": "Computer Science",
+    "total_copies": 10,
+    "available_copies": 8,
+    "rack_number": "CS-01"
+  },
+  {
+    "id": "bk-002",
+    "isbn": "978-0262033848",
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen",
+    "category": "Computer Science",
+    "total_copies": 5,
+    "available_copies": 4,
+    "rack_number": "CS-02"
+  },
+  {
+    "id": "bk-003",
+    "isbn": "978-0134685991",
+    "title": "Effective Java",
+    "author": "Joshua Bloch",
+    "category": "Programming",
+    "total_copies": 7,
+    "available_copies": 7,
+    "rack_number": "CS-04"
+  }
+]

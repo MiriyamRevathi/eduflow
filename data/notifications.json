@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ntf-001",
+    "recipient_id": "usr-007",
+    "recipient_role": "STUDENT",
+    "title": "Fee Payment Received",
+    "message": "Payment of $1,500.00 received for Fall 2026 Tuition Fee.",
+    "type": "INFO",
+    "read": false,
+    "timestamp": "2026-08-15 11:30:00"
+  },
+  {
+    "id": "ntf-002",
+    "recipient_id": "usr-007",
+    "recipient_role": "STUDENT",
+    "title": "New Assignment Posted",
+    "message": "Flask Web Architecture Project assigned in Python Programming.",
+    "type": "WARNING",
+    "read": true,
+    "timestamp": "2026-08-20 10:00:00"
+  }
+]

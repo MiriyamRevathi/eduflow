@@ -1,0 +1,11 @@
+[
+  {
+    "id": "aud-001",
+    "user": "admin@eduflow.local",
+    "role": "SUPER_ADMIN",
+    "action": "SYSTEM_SEED",
+    "entity": "SYSTEM",
+    "details": "Initial system data seeded successfully.",
+    "timestamp": "2026-01-01 09:00:00"
+  }
+]

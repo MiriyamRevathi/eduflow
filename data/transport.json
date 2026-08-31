@@ -1,0 +1,21 @@
+[
+  {
+    "id": "trn-001",
+    "route_name": "North Campus Express (Route A)",
+    "vehicle_number": "BUS-101",
+    "driver_name": "Dominic Toretto",
+    "driver_phone": "+1 555-7788",
+    "capacity": 30,
+    "current_capacity": 2,
+    "monthly_fee": 150.0,
+    "stops": [
+      "Central Station",
+      "Green Valley Park",
+      "EduFlow Gate 1"
+    ],
+    "assigned_student_ids": [
+      "std-001",
+      "std-003"
+    ]
+  }
+]

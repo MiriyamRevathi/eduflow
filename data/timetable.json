@@ -1,0 +1,41 @@
+[
+  {
+    "id": "tt-001",
+    "class_name": "CS-101",
+    "section": "A",
+    "day": "Monday",
+    "start_time": "09:00",
+    "end_time": "10:00",
+    "subject_id": "sbj-001",
+    "subject_name": "Python Programming",
+    "teacher_id": "tch-001",
+    "teacher_name": "Dr. Robert Langdon",
+    "room": "Room 101"
+  },
+  {
+    "id": "tt-002",
+    "class_name": "CS-101",
+    "section": "A",
+    "day": "Monday",
+    "start_time": "10:00",
+    "end_time": "11:00",
+    "subject_id": "sbj-002",
+    "subject_name": "Database Systems",
+    "teacher_id": "tch-001",
+    "teacher_name": "Dr. Robert Langdon",
+    "room": "Lab 2"
+  },
+  {
+    "id": "tt-003",
+    "class_name": "ECE-101",
+    "section": "A",
+    "day": "Tuesday",
+    "start_time": "11:00",
+    "end_time": "12:00",
+    "subject_id": "sbj-004",
+    "subject_name": "Circuit Theory",
+    "teacher_id": "tch-002",
+    "teacher_name": "Prof. Sarah Connor",
+    "room": "Room 204"
+  }
+]

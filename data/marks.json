@@ -1,0 +1,38 @@
+[
+  {
+    "id": "mrk-001",
+    "exam_id": "exm-002",
+    "student_id": "std-001",
+    "subject_id": "sbj-002",
+    "marks_obtained": 46,
+    "max_marks": 50,
+    "grade": "A+",
+    "gpa": 4.0,
+    "status": "PASSED",
+    "remarks": "Excellent performance"
+  },
+  {
+    "id": "mrk-002",
+    "exam_id": "exm-002",
+    "student_id": "std-002",
+    "subject_id": "sbj-002",
+    "marks_obtained": 38,
+    "max_marks": 50,
+    "grade": "A",
+    "gpa": 3.7,
+    "status": "PASSED",
+    "remarks": "Very Good"
+  },
+  {
+    "id": "mrk-003",
+    "exam_id": "exm-002",
+    "student_id": "std-003",
+    "subject_id": "sbj-004",
+    "marks_obtained": 22,
+    "max_marks": 50,
+    "grade": "C",
+    "gpa": 2.0,
+    "status": "PASSED",
+    "remarks": "Needs improvement"
+  }
+]
