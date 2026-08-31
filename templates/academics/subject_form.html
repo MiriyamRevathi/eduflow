@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Create Subject{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>➕ Add Subject to Course</h2>
+</div>
+<div class="card card-narrow">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('academics.new_subject') }}">
+            <div class="form-group">
+                <label>Parent Course Program *</label>
+                <select name="course_id" class="form-control" required>
+                    <option value="">-- Select Course --</option>
+                    {% for c in courses %}
+                    <option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject Code * (e.g. CS101-PY)</label>
+                <input type="text" name="code" class="form-control" required placeholder="CS101-PY">
+            </div>
+            <div class="form-group">
+                <label>Subject Title *</label>
+                <input type="text" name="name" class="form-control" required placeholder="Python Programming & Data Structures">
+            </div>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Credit Hours</label>
+                    <input type="number" name="credits" class="form-control" value="4">
+                </div>
+                <div class="form-group">
+                    <label>Semester</label>
+                    <input type="number" name="semester" class="form-control" value="1">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Subject</button>
+                <a href="{{ url_for('academics.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
