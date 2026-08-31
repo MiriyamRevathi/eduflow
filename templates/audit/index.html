@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}System Audit Logs{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>🛡️ System Audit & Security Logs</h2>
+    <p class="text-muted">Complete immutable trail of logins, state mutations, and record changes</p>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User Email</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                        <th>Entity</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for l in logs %}
+                    <tr>
+                        <td><span class="small-text">{{ l.timestamp }}</span></td>
+                        <td><strong>{{ l.user }}</strong></td>
+                        <td><span class="badge badge-light">{{ l.role }}</span></td>
+                        <td><span class="badge badge-primary">{{ l.action }}</span></td>
+                        <td><span class="badge badge-info">{{ l.entity }}</span></td>
+                        <td>{{ l.details or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center p-30 text-muted">No audit logs recorded yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
