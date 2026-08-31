@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Create Academic Course{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>➕ Create Academic Course Program</h2>
+</div>
+<div class="card card-narrow">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('academics.new_course') }}">
+            <div class="form-group">
+                <label>Course Code * (e.g. CS-101)</label>
+                <input type="text" name="code" class="form-control" required placeholder="CS-101">
+            </div>
+            <div class="form-group">
+                <label>Course Name *</label>
+                <input type="text" name="name" class="form-control" required placeholder="Computer Science & Engineering">
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" name="department" class="form-control" placeholder="Computer Science">
+            </div>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Duration (Years)</label>
+                    <input type="number" name="duration_years" class="form-control" value="4">
+                </div>
+                <div class="form-group">
+                    <label>Total Semesters</label>
+                    <input type="number" name="total_semesters" class="form-control" value="8">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Course</button>
+                <a href="{{ url_for('academics.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
