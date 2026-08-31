@@ -1,109 +1,143 @@
+"""
+EduFlow ERP Enterprise Service — AdmissionService
+Business logic layer managing data operations, auditing, validation, and analytics for Admission.
+"""
 from typing import Optional, Dict, Any, List, Tuple
 from repositories.admission_repository import AdmissionRepository
-from repositories.course_repository import CourseRepository
-from services.student_service import StudentService
 from repositories.audit_repository import AuditRepository
-from utils.id_generator import IDGenerator
+from validators.admission_validator import AdmissionValidator
+from schemas.admission_schema import AdmissionSchema
+from models.admission import AdmissionModel
 from utils.datetime_utils import DateTimeUtils
+import uuid
 
 class AdmissionService:
     def __init__(self):
-        self.admission_repo = AdmissionRepository()
-        self.course_repo = CourseRepository()
-        self.student_service = StudentService()
+        self.repo = AdmissionRepository()
         self.audit_repo = AuditRepository()
+        self.validator = AdmissionValidator()
+        self.schema = AdmissionSchema()
 
-    def get_paginated_admissions(self, page: int = 1, per_page: int = 10, search_query: str = None, status: str = None) -> Dict[str, Any]:
-        criteria = {}
-        if status:
-            criteria['status'] = status
+    def get_all(self, status_filter: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Retrieve all records with optional status filtering."""
+        if status_filter:
+            return self.repo.find_by_status(status_filter)
+        return self.repo.find_all()
 
-        result = self.admission_repo.paginate(
+    def get_by_id(self, item_id: str) -> Optional[Dict[str, Any]]:
+        """Get single record by primary key."""
+        if not item_id:
+            return None
+        return self.repo.find_by_id(item_id)
+
+    def get_by_code(self, code: str) -> Optional[Dict[str, Any]]:
+        """Find record by unique code string."""
+        if not code:
+            return None
+        return self.repo.find_by_code(code)
+
+    def get_paginated(
+        self,
+        page: int = 1,
+        per_page: int = 10,
+        query: Optional[str] = None,
+        status: Optional[str] = None,
+        sort_by: str = 'id',
+        order: str = 'asc'
+    ) -> Dict[str, Any]:
+        """Fetch paginated records with text query and status filters."""
+        return self.repo.get_paginated_filtered(
             page=page,
             per_page=per_page,
-            criteria=criteria,
-            search_query=search_query,
-            search_fields=['application_no', 'applicant_name', 'email', 'phone'],
-            sort_by='applied_date',
-            order='desc'
+            status=status,
+            query=query,
+            sort_by=sort_by,
+            order=order
         )
 
-        for item in result['items']:
-            course = self.course_repo.find_by_id(item.get('course_id'))
-            item['course_name'] = course.get('name') if course else 'N/A'
+    def create_record(self, payload: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Create new record with schema sanitization and audit logging."""
+        sanitized = self.schema.sanitize_payload(payload)
+        is_valid, errors = self.validator.check_integrity(sanitized)
+        if not is_valid:
+            return False, f"Validation failed: {', '.join(errors)}", None
 
-        return result
+        if 'id' not in sanitized or not sanitized['id']:
+            sanitized['id'] = f"adm-{uuid.uuid4().hex[:6]}"
 
-    def apply(self, data: Dict[str, Any]) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-        name = data.get('applicant_name', '').strip()
-        email = data.get('email', '').strip().lower()
+        if 'status' not in sanitized:
+            sanitized['status'] = 'ACTIVE'
 
-        if not name or not email:
-            return False, "Applicant Name and Email are required.", None
+        sanitized['created_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['updated_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['created_by'] = actor_email
 
-        adm_count = self.admission_repo.count() + 1
-        app_no = IDGenerator.generate_admission_id(adm_count)
+        created = self.repo.create(sanitized)
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"CREATE_ADMISSION", m_name.upper(),
+            f"Created Admission record ID: {created['id']}"
+        )
+        return True, f"Admission record created successfully.", created
 
-        admission_record = {
-            'id': f"adm-{adm_count:04d}",
-            'application_no': app_no,
-            'applicant_name': name,
-            'email': email,
-            'phone': data.get('phone', ''),
-            'course_id': data.get('course_id', ''),
-            'previous_qualification': data.get('previous_qualification', ''),
-            'status': 'APPLIED',
-            'applied_date': DateTimeUtils.current_date_str(),
-            'remarks': data.get('remarks', 'Application submitted.')
-        }
+    def update_record(self, item_id: str, updates: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Update existing record with validation checks."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Admission record not found.", None
 
-        created = self.admission_repo.create(admission_record)
-        self.audit_repo.log_action(email, 'APPLICANT', 'ADMISSION_APPLIED', 'ADMISSION', f"Submitted application {app_no}")
-        return True, f"Application {app_no} submitted successfully.", created
+        sanitized = self.schema.sanitize_payload(updates)
+        sanitized['updated_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['updated_by'] = actor_email
 
-    def update_status(self, admission_id: str, new_status: str, remarks: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
-        admission = self.admission_repo.find_by_id(admission_id)
-        if not admission:
-            return False, "Admission record not found."
+        updated = self.repo.update(item_id, sanitized)
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"UPDATE_ADMISSION", m_name.upper(),
+            f"Updated Admission record ID: {item_id}"
+        )
+        return True, f"Admission record updated successfully.", updated
 
-        allowed_statuses = ['APPLIED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'WAITLISTED', 'ENROLLED']
-        if new_status not in allowed_statuses:
-            return False, "Invalid status value."
+    def archive_record(self, item_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
+        """Soft delete/archive record."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Admission record not found."
 
-        self.admission_repo.update(admission_id, {'status': new_status, 'remarks': remarks})
-        self.audit_repo.log_action(actor_email, actor_role, 'ADMISSION_STATUS_CHANGE', 'ADMISSION', f"Changed status of {admission['application_no']} to {new_status}")
-        return True, f"Status updated to {new_status}."
+        self.repo.update(item_id, {'status': 'ARCHIVED', 'updated_at': DateTimeUtils.current_datetime_str()})
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"ARCHIVE_ADMISSION", m_name.upper(),
+            f"Archived Admission record ID: {item_id}"
+        )
+        return True, f"Admission record archived successfully."
 
-    def enroll_applicant(self, admission_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
-        admission = self.admission_repo.find_by_id(admission_id)
-        if not admission:
-            return False, "Admission record not found."
+    def hard_delete_record(self, item_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
+        """Permanently delete record from JSON storage."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Admission record not found."
 
-        if admission.get('status') == 'ENROLLED':
-            return False, "Applicant is already enrolled."
-
-        # Convert to real student
-        student_payload = {
-            'full_name': admission['applicant_name'],
-            'email': admission['email'],
-            'phone': admission.get('phone', ''),
-            'gender': 'Male',
-            'dob': '2005-01-01',
-            'course_id': admission.get('course_id', ''),
-            'class_name': 'CS-101',
-            'section': 'A',
-            'semester': 1,
-            'academic_year': '2026',
-            'guardian_name': 'Parent of ' + admission['applicant_name'],
-            'guardian_phone': admission.get('phone', ''),
-            'address': 'Enrolled via Admissions Pipeline',
-            'enrollment_date': DateTimeUtils.current_date_str()
-        }
-
-        success, msg, created_std = self.student_service.create_student(student_payload, actor_email, actor_role)
+        success = self.repo.delete(item_id)
         if success:
-            self.admission_repo.update(admission_id, {'status': 'ENROLLED', 'remarks': f"Enrolled as Student ID: {created_std['student_id']}"})
-            self.audit_repo.log_action(actor_email, actor_role, 'ENROLL_APPLICANT', 'ADMISSION', f"Enrolled applicant {admission['application_no']} as student {created_std['student_id']}")
-            return True, f"Applicant enrolled successfully as Student {created_std['student_id']}."
-        else:
-            return False, f"Failed to enroll: {msg}"
+            self.audit_repo.log_action(
+                actor_email, actor_role, f"DELETE_ADMISSION", m_name.upper(),
+                f"Permanently deleted Admission record ID: {item_id}"
+            )
+            return True, f"Admission record deleted permanently."
+        return False, "Delete operation failed."
+
+    def get_dashboard_summary(self) -> Dict[str, Any]:
+        """Calculate statistics summary for Admission module."""
+        return self.repo.get_summary_stats()
+
+    def export_as_csv_rows(self) -> List[List[str]]:
+        """Export collection records as CSV rows."""
+        records = self.get_all()
+        rows = [['ID', 'Name/Title', 'Code', 'Status', 'Created At']]
+        for r in records:
+            rows.append([
+                str(r.get('id', '')),
+                str(r.get('name') or r.get('title') or ''),
+                str(r.get('code', '')),
+                str(r.get('status', '')),
+                str(r.get('created_at', ''))
+            ])
+        return rows

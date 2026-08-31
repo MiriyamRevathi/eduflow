@@ -1,52 +1,143 @@
+"""
+EduFlow ERP Enterprise Service — HostelService
+Business logic layer managing data operations, auditing, validation, and analytics for Hostel.
+"""
 from typing import Optional, Dict, Any, List, Tuple
 from repositories.hostel_repository import HostelRepository
-from repositories.student_repository import StudentRepository
 from repositories.audit_repository import AuditRepository
+from validators.hostel_validator import HostelValidator
+from schemas.hostel_schema import HostelSchema
+from models.hostel import HostelModel
 from utils.datetime_utils import DateTimeUtils
+import uuid
 
 class HostelService:
     def __init__(self):
-        self.hostel_repo = HostelRepository()
-        self.student_repo = StudentRepository()
+        self.repo = HostelRepository()
         self.audit_repo = AuditRepository()
+        self.validator = HostelValidator()
+        self.schema = HostelSchema()
 
-    def get_hostels_summary(self) -> List[Dict[str, Any]]:
-        return self.hostel_repo.find_all()
+    def get_all(self, status_filter: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Retrieve all records with optional status filtering."""
+        if status_filter:
+            return self.repo.find_by_status(status_filter)
+        return self.repo.find_all()
 
-    def allocate_bed(self, hostel_id: str, room_no: str, student_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
-        hostel = self.hostel_repo.find_by_id(hostel_id)
-        if not hostel:
-            return False, "Hostel record not found."
+    def get_by_id(self, item_id: str) -> Optional[Dict[str, Any]]:
+        """Get single record by primary key."""
+        if not item_id:
+            return None
+        return self.repo.find_by_id(item_id)
 
-        student = self.student_repo.find_by_id(student_id)
-        if not student:
-            return False, "Student not found."
+    def get_by_code(self, code: str) -> Optional[Dict[str, Any]]:
+        """Find record by unique code string."""
+        if not code:
+            return None
+        return self.repo.find_by_code(code)
 
-        rooms = hostel.get('rooms', [])
-        target_room = None
-        for r in rooms:
-            if r.get('room_no') == room_no:
-                target_room = r
-                break
+    def get_paginated(
+        self,
+        page: int = 1,
+        per_page: int = 10,
+        query: Optional[str] = None,
+        status: Optional[str] = None,
+        sort_by: str = 'id',
+        order: str = 'asc'
+    ) -> Dict[str, Any]:
+        """Fetch paginated records with text query and status filters."""
+        return self.repo.get_paginated_filtered(
+            page=page,
+            per_page=per_page,
+            status=status,
+            query=query,
+            sort_by=sort_by,
+            order=order
+        )
 
-        if not target_room:
-            return False, f"Room {room_no} does not exist in {hostel['name']}."
+    def create_record(self, payload: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Create new record with schema sanitization and audit logging."""
+        sanitized = self.schema.sanitize_payload(payload)
+        is_valid, errors = self.validator.check_integrity(sanitized)
+        if not is_valid:
+            return False, f"Validation failed: {', '.join(errors)}", None
 
-        if target_room.get('occupied', 0) >= target_room.get('capacity', 2):
-            return False, f"Room {room_no} is fully occupied."
+        if 'id' not in sanitized or not sanitized['id']:
+            sanitized['id'] = f"hos-{uuid.uuid4().hex[:6]}"
 
-        allocations = target_room.get('allocations', [])
-        for a in allocations:
-            if a.get('student_id') == student_id:
-                return False, "Student is already allocated a bed in this room."
+        if 'status' not in sanitized:
+            sanitized['status'] = 'ACTIVE'
 
-        allocations.append({
-            'student_id': student_id,
-            'student_name': student.get('full_name'),
-            'allocated_at': DateTimeUtils.current_date_str()
-        })
+        sanitized['created_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['updated_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['created_by'] = actor_email
 
-        target_room['occupied'] = len(allocations)
-        self.hostel_repo.update(hostel_id, {'rooms': rooms})
-        self.audit_repo.log_action(actor_email, actor_role, 'ALLOCATE_HOSTEL_BED', 'HOSTEL', f"Allocated bed in room {room_no} of {hostel['name']} to {student['full_name']}")
-        return True, f"Bed in Room {room_no} allocated to {student['full_name']} successfully."
+        created = self.repo.create(sanitized)
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"CREATE_HOSTEL", m_name.upper(),
+            f"Created Hostel record ID: {created['id']}"
+        )
+        return True, f"Hostel record created successfully.", created
+
+    def update_record(self, item_id: str, updates: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Update existing record with validation checks."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Hostel record not found.", None
+
+        sanitized = self.schema.sanitize_payload(updates)
+        sanitized['updated_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['updated_by'] = actor_email
+
+        updated = self.repo.update(item_id, sanitized)
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"UPDATE_HOSTEL", m_name.upper(),
+            f"Updated Hostel record ID: {item_id}"
+        )
+        return True, f"Hostel record updated successfully.", updated
+
+    def archive_record(self, item_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
+        """Soft delete/archive record."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Hostel record not found."
+
+        self.repo.update(item_id, {'status': 'ARCHIVED', 'updated_at': DateTimeUtils.current_datetime_str()})
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"ARCHIVE_HOSTEL", m_name.upper(),
+            f"Archived Hostel record ID: {item_id}"
+        )
+        return True, f"Hostel record archived successfully."
+
+    def hard_delete_record(self, item_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
+        """Permanently delete record from JSON storage."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Hostel record not found."
+
+        success = self.repo.delete(item_id)
+        if success:
+            self.audit_repo.log_action(
+                actor_email, actor_role, f"DELETE_HOSTEL", m_name.upper(),
+                f"Permanently deleted Hostel record ID: {item_id}"
+            )
+            return True, f"Hostel record deleted permanently."
+        return False, "Delete operation failed."
+
+    def get_dashboard_summary(self) -> Dict[str, Any]:
+        """Calculate statistics summary for Hostel module."""
+        return self.repo.get_summary_stats()
+
+    def export_as_csv_rows(self) -> List[List[str]]:
+        """Export collection records as CSV rows."""
+        records = self.get_all()
+        rows = [['ID', 'Name/Title', 'Code', 'Status', 'Created At']]
+        for r in records:
+            rows.append([
+                str(r.get('id', '')),
+                str(r.get('name') or r.get('title') or ''),
+                str(r.get('code', '')),
+                str(r.get('status', '')),
+                str(r.get('created_at', ''))
+            ])
+        return rows

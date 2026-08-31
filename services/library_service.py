@@ -1,112 +1,143 @@
+"""
+EduFlow ERP Enterprise Service — LibraryService
+Business logic layer managing data operations, auditing, validation, and analytics for Library.
+"""
 from typing import Optional, Dict, Any, List, Tuple
-from repositories.book_repository import BookRepository
 from repositories.library_repository import LibraryRepository
-from repositories.student_repository import StudentRepository
 from repositories.audit_repository import AuditRepository
+from validators.library_validator import LibraryValidator
+from schemas.library_schema import LibrarySchema
+from models.library import LibraryModel
 from utils.datetime_utils import DateTimeUtils
 import uuid
-import datetime
 
 class LibraryService:
     def __init__(self):
-        self.book_repo = BookRepository()
-        self.library_repo = LibraryRepository()
-        self.student_repo = StudentRepository()
+        self.repo = LibraryRepository()
         self.audit_repo = AuditRepository()
+        self.validator = LibraryValidator()
+        self.schema = LibrarySchema()
 
-    def get_catalog(self, search_query: str = None, category: str = None) -> List[Dict[str, Any]]:
-        if search_query:
-            return self.book_repo.search(search_query, ['title', 'author', 'isbn', 'category'])
-        if category:
-            return self.book_repo.find_by_field('category', category)
-        return self.book_repo.find_all()
+    def get_all(self, status_filter: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Retrieve all records with optional status filtering."""
+        if status_filter:
+            return self.repo.find_by_status(status_filter)
+        return self.repo.find_all()
 
-    def add_book(self, data: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-        title = data.get('title', '').strip()
-        author = data.get('author', '').strip()
+    def get_by_id(self, item_id: str) -> Optional[Dict[str, Any]]:
+        """Get single record by primary key."""
+        if not item_id:
+            return None
+        return self.repo.find_by_id(item_id)
 
-        if not title or not author:
-            return False, "Book Title and Author are required.", None
+    def get_by_code(self, code: str) -> Optional[Dict[str, Any]]:
+        """Find record by unique code string."""
+        if not code:
+            return None
+        return self.repo.find_by_code(code)
 
-        book_count = self.book_repo.count() + 1
-        book_data = {
-            'id': f"bk-{book_count:04d}",
-            'isbn': data.get('isbn', f"978-013{book_count:06d}"),
-            'title': title,
-            'author': author,
-            'category': data.get('category', 'General'),
-            'total_copies': int(data.get('total_copies', 5)),
-            'available_copies': int(data.get('total_copies', 5)),
-            'rack_number': data.get('rack_number', 'CS-01')
-        }
+    def get_paginated(
+        self,
+        page: int = 1,
+        per_page: int = 10,
+        query: Optional[str] = None,
+        status: Optional[str] = None,
+        sort_by: str = 'id',
+        order: str = 'asc'
+    ) -> Dict[str, Any]:
+        """Fetch paginated records with text query and status filters."""
+        return self.repo.get_paginated_filtered(
+            page=page,
+            per_page=per_page,
+            status=status,
+            query=query,
+            sort_by=sort_by,
+            order=order
+        )
 
-        created = self.book_repo.create(book_data)
-        self.audit_repo.log_action(actor_email, actor_role, 'ADD_BOOK', 'LIBRARY', f"Added book {title} to library catalog")
-        return True, f"Book {title} added to catalog.", created
+    def create_record(self, payload: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Create new record with schema sanitization and audit logging."""
+        sanitized = self.schema.sanitize_payload(payload)
+        is_valid, errors = self.validator.check_integrity(sanitized)
+        if not is_valid:
+            return False, f"Validation failed: {', '.join(errors)}", None
 
-    def issue_book(self, book_id: str, student_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
-        book = self.book_repo.find_by_id(book_id)
-        if not book:
-            return False, "Book not found."
+        if 'id' not in sanitized or not sanitized['id']:
+            sanitized['id'] = f"lib-{uuid.uuid4().hex[:6]}"
 
-        avail = int(book.get('available_copies', 0))
-        if avail <= 0:
-            return False, "No copies available for issue."
+        if 'status' not in sanitized:
+            sanitized['status'] = 'ACTIVE'
 
-        student = self.student_repo.find_by_id(student_id)
-        if not student:
-            return False, "Student record not found."
+        sanitized['created_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['updated_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['created_by'] = actor_email
 
-        today = datetime.date.today()
-        due_date = today + datetime.timedelta(days=14)
+        created = self.repo.create(sanitized)
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"CREATE_LIBRARY", m_name.upper(),
+            f"Created Library record ID: {created['id']}"
+        )
+        return True, f"Library record created successfully.", created
 
-        txn = {
-            'id': str(uuid.uuid4()),
-            'book_id': book_id,
-            'book_title': book.get('title'),
-            'student_id': student_id,
-            'issue_date': today.isoformat(),
-            'due_date': due_date.isoformat(),
-            'return_date': None,
-            'status': 'ISSUED',
-            'fine_amount': 0.0
-        }
+    def update_record(self, item_id: str, updates: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Update existing record with validation checks."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Library record not found.", None
 
-        self.library_repo.create(txn)
-        self.book_repo.update(book_id, {'available_copies': avail - 1})
-        self.audit_repo.log_action(actor_email, actor_role, 'ISSUE_BOOK', 'LIBRARY', f"Issued '{book['title']}' to student {student['full_name']}")
-        return True, f"Book '{book['title']}' issued to {student['full_name']} (Due: {due_date.isoformat()})."
+        sanitized = self.schema.sanitize_payload(updates)
+        sanitized['updated_at'] = DateTimeUtils.current_datetime_str()
+        sanitized['updated_by'] = actor_email
 
-    def return_book(self, txn_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
-        txn = self.library_repo.find_by_id(txn_id)
-        if not txn:
-            return False, "Transaction record not found."
+        updated = self.repo.update(item_id, sanitized)
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"UPDATE_LIBRARY", m_name.upper(),
+            f"Updated Library record ID: {item_id}"
+        )
+        return True, f"Library record updated successfully.", updated
 
-        if txn.get('status') == 'RETURNED':
-            return False, "Book has already been returned."
+    def archive_record(self, item_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
+        """Soft delete/archive record."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Library record not found."
 
-        today = datetime.date.today()
-        today_str = today.isoformat()
-        due_str = txn.get('due_date')
+        self.repo.update(item_id, {'status': 'ARCHIVED', 'updated_at': DateTimeUtils.current_datetime_str()})
+        self.audit_repo.log_action(
+            actor_email, actor_role, f"ARCHIVE_LIBRARY", m_name.upper(),
+            f"Archived Library record ID: {item_id}"
+        )
+        return True, f"Library record archived successfully."
 
-        fine = 0.0
-        if due_str:
-            due_dt = datetime.datetime.strptime(due_str, '%Y-%m-%d').date()
-            if today > due_dt:
-                overdue_days = (today - due_dt).days
-                fine = float(overdue_days * 2.0)  # $2 per overdue day
+    def hard_delete_record(self, item_id: str, actor_email: str, actor_role: str) -> Tuple[bool, str]:
+        """Permanently delete record from JSON storage."""
+        existing = self.repo.find_by_id(item_id)
+        if not existing:
+            return False, f"Library record not found."
 
-        self.library_repo.update(txn_id, {
-            'return_date': today_str,
-            'status': 'RETURNED',
-            'fine_amount': fine
-        })
+        success = self.repo.delete(item_id)
+        if success:
+            self.audit_repo.log_action(
+                actor_email, actor_role, f"DELETE_LIBRARY", m_name.upper(),
+                f"Permanently deleted Library record ID: {item_id}"
+            )
+            return True, f"Library record deleted permanently."
+        return False, "Delete operation failed."
 
-        # Replenish copy
-        book = self.book_repo.find_by_id(txn.get('book_id'))
-        if book:
-            curr_avail = int(book.get('available_copies', 0))
-            self.book_repo.update(book['id'], {'available_copies': curr_avail + 1})
+    def get_dashboard_summary(self) -> Dict[str, Any]:
+        """Calculate statistics summary for Library module."""
+        return self.repo.get_summary_stats()
 
-        self.audit_repo.log_action(actor_email, actor_role, 'RETURN_BOOK', 'LIBRARY', f"Returned book '{txn.get('book_title')}' with fine ${fine:.2f}")
-        return True, f"Book returned successfully. Overdue fine assessed: ${fine:.2f}."
+    def export_as_csv_rows(self) -> List[List[str]]:
+        """Export collection records as CSV rows."""
+        records = self.get_all()
+        rows = [['ID', 'Name/Title', 'Code', 'Status', 'Created At']]
+        for r in records:
+            rows.append([
+                str(r.get('id', '')),
+                str(r.get('name') or r.get('title') or ''),
+                str(r.get('code', '')),
+                str(r.get('status', '')),
+                str(r.get('created_at', ''))
+            ])
+        return rows

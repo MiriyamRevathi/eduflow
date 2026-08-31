@@ -1,3 +1,7 @@
+"""
+EduFlow ERP Service — StudentService
+Student profiles, academic history, attendance summary, fee status, and parent association.
+"""
 from typing import Optional, Dict, Any, List, Tuple
 from repositories.student_repository import StudentRepository
 from repositories.user_repository import UserRepository
@@ -45,7 +49,6 @@ class StudentService:
             order='asc'
         )
 
-        # Enhance with course details
         for std in result['items']:
             course = self.course_repo.find_by_id(std.get('course_id'))
             std['course_name'] = course.get('name') if course else 'N/A'
@@ -58,16 +61,13 @@ class StudentService:
         if not student:
             return None
 
-        # Course details
         course = self.course_repo.find_by_id(student.get('course_id'))
         student['course'] = course
 
-        # Attendance stats
         att_records = self.attendance_repo.find_by_student(student_id)
         student['attendance_records'] = sorted(att_records, key=lambda x: x.get('date', ''), reverse=True)
         student['attendance_pct'] = self.attendance_repo.get_attendance_percentage(student_id)
 
-        # Marks & GPA
         marks = self.marks_repo.find_by_student(student_id)
         student['marks'] = marks
         if marks:
@@ -76,22 +76,15 @@ class StudentService:
         else:
             student['avg_gpa'] = 0.0
 
-        # Fees
         fees = self.fee_repo.find_by_student(student_id)
         student['fees'] = fees
         student['total_pending_fee'] = sum(f.get('pending_amount', 0) for f in fees)
 
-        # Library
         library_txns = self.library_repo.find_all_by_student(student_id)
         student['library_txns'] = library_txns
 
-        # Hostel
         student['hostel_info'] = self.hostel_repo.find_by_student(student_id)
-
-        # Transport
         student['transport_info'] = self.transport_repo.find_by_student(student_id)
-
-        # Leave history
         student['leaves'] = self.leave_repo.find_by_applicant(student_id)
 
         return student
@@ -106,7 +99,6 @@ class StudentService:
         if self.user_repo.find_by_email(email):
             return False, "A user with this email address already exists.", None
 
-        # 1. Create User Account
         user_count = self.user_repo.count() + 1
         username = email.split('@')[0]
         user_data = {
@@ -121,7 +113,6 @@ class StudentService:
         }
         self.user_repo.create(user_data)
 
-        # 2. Create Student Record
         std_count = self.student_repo.count() + 1
         student_id_code = IDGenerator.generate_student_id(std_count)
         student_data = {
@@ -155,8 +146,6 @@ class StudentService:
             return False, "Student record not found."
 
         self.student_repo.update(student_id, updates)
-        
-        # Also sync full name if changed
         if 'full_name' in updates and student.get('user_id'):
             self.user_repo.update(student['user_id'], {'full_name': updates['full_name']})
 
@@ -168,10 +157,55 @@ class StudentService:
         if not student:
             return False, "Student not found."
 
-        # Soft delete / set to ARCHIVED
         self.student_repo.update(student_id, {'status': 'ARCHIVED'})
         if student.get('user_id'):
             self.user_repo.update(student['user_id'], {'status': 'INACTIVE'})
 
         self.audit_repo.log_action(actor_email, actor_role, 'DELETE_STUDENT', 'STUDENT', f"Archived student {student_id}")
         return True, "Student record archived successfully."
+
+    def calculate_academic_standing(self, student_id: str) -> Dict[str, Any]:
+        """Calculate student overall academic standing status."""
+        profile = self.get_student_full_profile(student_id)
+        if not profile:
+            return {'status': 'UNKNOWN', 'gpa': 0.0, 'standing': 'Not Found'}
+
+        gpa = profile.get('avg_gpa', 0.0)
+        att_pct = profile.get('attendance_pct', 100.0)
+
+        if gpa >= 3.5 and att_pct >= 90:
+            standing = "Dean's List / High Honors"
+            status = 'EXCELLENT'
+        elif gpa >= 2.5 and att_pct >= 75:
+            standing = "Good Standing"
+            status = 'GOOD'
+        elif gpa >= 2.0:
+            standing = "Satisfactory"
+            status = 'AVERAGE'
+        else:
+            standing = "Academic Probation"
+            status = 'PROBATION'
+
+        return {
+            'student_id': student_id,
+            'avg_gpa': gpa,
+            'attendance_pct': att_pct,
+            'standing': standing,
+            'status': status
+        }
+
+    def export_student_roster_csv(self) -> List[List[str]]:
+        """Export student roster as structured CSV rows."""
+        students = self.student_repo.find_all()
+        rows = [['Student ID', 'Full Name', 'Email', 'Class', 'Section', 'Status', 'Enrollment Date']]
+        for s in students:
+            rows.append([
+                str(s.get('student_id', '')),
+                str(s.get('full_name', '')),
+                str(s.get('email', '')),
+                str(s.get('class_name', '')),
+                str(s.get('section', '')),
+                str(s.get('status', '')),
+                str(s.get('enrollment_date', ''))
+            ])
+        return rows

@@ -1,11 +1,15 @@
+"""
+EduFlow ERP Service — FeeService
+Fee invoices, discount calculations, partial payment handling, and receipt generation.
+"""
 from typing import Optional, Dict, Any, List, Tuple
+import uuid
 from repositories.fee_repository import FeeRepository
 from repositories.payment_repository import PaymentRepository
 from repositories.student_repository import StudentRepository
 from repositories.audit_repository import AuditRepository
 from utils.id_generator import IDGenerator
 from utils.datetime_utils import DateTimeUtils
-import uuid
 
 class FeeService:
     def __init__(self):
@@ -69,14 +73,12 @@ class FeeService:
         new_pending = pending - amount
         new_status = 'PAID' if new_pending <= 0.01 else 'PARTIAL'
 
-        # Update fee record
         self.fee_repo.update(fee_id, {
             'paid_amount': round(new_paid, 2),
             'pending_amount': round(new_pending, 2),
             'status': new_status
         })
 
-        # Create payment receipt
         pay_count = self.payment_repo.count() + 1
         pay_code = IDGenerator.generate_payment_id(pay_count)
 

@@ -1,4 +1,9 @@
+"""
+EduFlow ERP Service — ExamService
+Examination scheduling, marks entry, GPA and grade calculation engine.
+"""
 from typing import Optional, Dict, Any, List, Tuple
+import uuid
 from repositories.exam_repository import ExamRepository
 from repositories.marks_repository import MarksRepository
 from repositories.student_repository import StudentRepository
@@ -6,7 +11,6 @@ from repositories.course_repository import CourseRepository
 from repositories.subject_repository import SubjectRepository
 from repositories.audit_repository import AuditRepository
 from utils.id_generator import IDGenerator
-import uuid
 
 class ExamService:
     def __init__(self):
