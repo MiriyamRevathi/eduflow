@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Transport Manager Portal{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>🚌 Transport Operations Portal</h2>
+</div>
+<div class="card">
+    <div class="card-body">
+        <a href="{{ url_for('transport.index') }}" class="btn btn-primary">Fleet Routes & Student Commute →</a>
+    </div>
+</div>
+{% endblock %}

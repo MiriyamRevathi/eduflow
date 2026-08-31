@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Hostel Warden Portal{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>🏢 Hostel Warden Management Portal</h2>
+</div>
+<div class="card">
+    <div class="card-body">
+        <a href="{{ url_for('hostel.index') }}" class="btn btn-primary">Residential Halls & Room Bed Allocations →</a>
+    </div>
+</div>
+{% endblock %}

@@ -16,5 +16,41 @@
     "entity": "AUTH",
     "details": "User logged in successfully.",
     "timestamp": "2026-08-31 11:51:10"
+  },
+  {
+    "id": "ffa67726-e33b-4bd8-8dc6-1fe3068195a0",
+    "user": "admin@eduflow.local",
+    "role": "SUPER_ADMIN",
+    "action": "USER_LOGIN",
+    "entity": "AUTH",
+    "details": "User logged in successfully.",
+    "timestamp": "2026-08-31 11:52:10"
+  },
+  {
+    "id": "3c7ffb7f-0fc7-4dfd-b9d0-d0af126734a9",
+    "user": "admin@eduflow.local",
+    "role": "SUPER_ADMIN",
+    "action": "USER_LOGIN",
+    "entity": "AUTH",
+    "details": "User logged in successfully.",
+    "timestamp": "2026-08-31 11:52:49"
+  },
+  {
+    "id": "3ba82fe6-f65f-4e41-a40a-3a61734a480b",
+    "user": "admin@eduflow.local",
+    "role": "SUPER_ADMIN",
+    "action": "USER_LOGIN",
+    "entity": "AUTH",
+    "details": "User logged in successfully.",
+    "timestamp": "2026-08-31 11:53:08"
+  },
+  {
+    "id": "3ceb3f14-0523-4503-9aa3-9533b6ad7bec",
+    "user": "admin@eduflow.local",
+    "role": "SUPER_ADMIN",
+    "action": "USER_LOGIN",
+    "entity": "AUTH",
+    "details": "User logged in successfully.",
+    "timestamp": "2026-08-31 11:53:44"
   }
 ]

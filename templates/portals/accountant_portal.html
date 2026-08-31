@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Accountant Portal{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>💳 Accountant Financial Ledger Portal</h2>
+</div>
+<div class="card">
+    <div class="card-body">
+        <a href="{{ url_for('fees.index') }}" class="btn btn-primary">Manage All Fees & Invoices →</a>
+    </div>
+</div>
+{% endblock %}

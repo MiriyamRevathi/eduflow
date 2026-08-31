@@ -32,6 +32,7 @@ def create_app():
     from routes.search_routes import search_bp
     from routes.audit_routes import audit_bp
     from routes.notification_routes import notifications_bp
+    from routes.portal_routes import portal_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -54,6 +55,7 @@ def create_app():
     app.register_blueprint(search_bp)
     app.register_blueprint(audit_bp)
     app.register_blueprint(notifications_bp)
+    app.register_blueprint(portal_bp)
 
     # Error Handlers
     @app.errorhandler(403)
