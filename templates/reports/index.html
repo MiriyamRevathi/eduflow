@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}System Reports - EduFlow ERP{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-15">
+    <div>
+        <h2 class="font-bold text-primary">📊 Super Admin Reports & Data Center</h2>
+        <p class="text-muted small-text">Generate, inspect, and export executive reports across institutions, academic cohorts, and financial ledgers.</p>
+    </div>
+</div>
+
+<div class="grid-3 m-b-25">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3>👨‍🎓 Student Roster Reports</h3>
+        </div>
+        <div class="card-body">
+            <p class="small-text text-muted m-b-15">Download nationwide enrolled student profiles, academic standings, and class assignments.</p>
+            <a href="{{ url_for('reporting.export_students_csv') }}" class="btn btn-outline-primary btn-block">📥 Export Students CSV</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3>📅 Attendance Analytics Reports</h3>
+        </div>
+        <div class="card-body">
+            <p class="small-text text-muted m-b-15">Download attendance logs, presence percentages, and absence trends by institution.</p>
+            <a href="{{ url_for('reporting.export_attendance_csv') }}" class="btn btn-outline-success btn-block">📥 Export Attendance CSV</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3>💳 Fee & Financial Ledgers</h3>
+        </div>
+        <div class="card-body">
+            <p class="small-text text-muted m-b-15">Download tuition fee collections, pending balances, discount vouchers, and receipts.</p>
+            <a href="{{ url_for('reporting.export_fees_csv') }}" class="btn btn-outline-warning btn-block">📥 Export Fees CSV</a>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h3>🏛️ Cross-Institution Summary Ledger</h3>
+    </div>
+    <div class="card-body">
+        <p class="text-muted small-text m-b-15">Complete breakdown of all registered educational institutions and metrics.</p>
+        <a href="{{ url_for('institutions.export_csv') }}" class="btn btn-primary">📥 Export Complete Institution Ledger CSV</a>
+    </div>
+</div>
+{% endblock %}

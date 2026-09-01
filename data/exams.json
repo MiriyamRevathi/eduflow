@@ -26,5 +26,19 @@
     "max_marks": 50,
     "pass_marks": 20,
     "status": "COMPLETED"
+  },
+  {
+    "id": "exm-0003",
+    "exam_id": "EXM-2026-0003",
+    "title": "sgffgjkjl;klhhcg",
+    "course_id": "crs-001",
+    "subject_id": "sbj-001",
+    "exam_date": "2026-09-01",
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "room": "Auditorium A",
+    "max_marks": 100.0,
+    "pass_marks": 40.0,
+    "status": "SCHEDULED"
   }
 ]

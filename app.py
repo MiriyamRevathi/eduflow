@@ -14,6 +14,8 @@ def create_app():
     # Register Blueprints
     from routes.auth_routes import auth_bp
     from routes.dashboard_routes import dashboard_bp
+    from routes.institution_routes import institutions_bp
+    from routes.user_routes import users_bp
     from routes.student_routes import students_bp
     from routes.faculty_routes import faculty_bp
     from routes.academic_routes import academics_bp
@@ -28,14 +30,18 @@ def create_app():
     from routes.leave_routes import leave_bp
     from routes.event_routes import events_bp
     from routes.analytics_routes import analytics_bp, reporting_bp
+    from routes.reports_routes import reports_bp
     from routes.ml_routes import ml_bp
     from routes.search_routes import search_bp
     from routes.audit_routes import audit_bp
     from routes.notification_routes import notifications_bp
     from routes.portal_routes import portal_bp
+    from routes.settings_routes import settings_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(institutions_bp)
+    app.register_blueprint(users_bp)
     app.register_blueprint(students_bp)
     app.register_blueprint(faculty_bp)
     app.register_blueprint(academics_bp)
@@ -51,11 +57,13 @@ def create_app():
     app.register_blueprint(events_bp)
     app.register_blueprint(analytics_bp)
     app.register_blueprint(reporting_bp)
+    app.register_blueprint(reports_bp)
     app.register_blueprint(ml_bp)
     app.register_blueprint(search_bp)
-    app.register_blueprint(audit_bp)
+    app.register_blueprint(audit_blueprint if 'audit_blueprint' in locals() else audit_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(portal_bp)
+    app.register_blueprint(settings_bp)
 
     # Error Handlers
     @app.errorhandler(403)

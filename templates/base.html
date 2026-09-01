@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}EduFlow ERP{% endblock %} - Enterprise Management System</title>
+    <title>{% block title %}Super Admin Dashboard{% endblock %} - EduFlow ERP</title>
     <!-- Main CSS Suites -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
@@ -27,12 +27,13 @@
                 <span class="brand-icon">🎓</span>
                 <span class="brand-text">EduFlow <span class="brand-badge">ERP</span></span>
             </a>
+            <span class="page-title-header">Super Admin Dashboard</span>
         </div>
 
         <div class="nav-center">
             <div class="global-search-trigger" id="open-global-search">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <span>Search students, faculty, books, courses... (Ctrl+K)</span>
+                <span>Search institutions, students, faculty, users, courses... (Ctrl+K)</span>
                 <kbd>Ctrl+K</kbd>
             </div>
         </div>
@@ -44,11 +45,16 @@
                 <span class="theme-icon-dark">🌙</span>
             </button>
 
+            <!-- Help Button -->
+            <button id="help-modal-btn" class="icon-btn" title="System Help & Documentation" onclick="document.getElementById('help-modal').classList.add('active')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </button>
+
             <!-- Notifications Center -->
             <div class="dropdown-wrapper">
                 <button id="notifications-btn" class="icon-btn nav-badge-container" title="Notifications">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    <span id="unread-notification-count" class="badge badge-pill badge-danger" style="display:none;">0</span>
+                    <span id="unread-notification-count" class="badge badge-pill badge-danger" style="display:inline-block;">3</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right notification-dropdown" id="notification-menu">
                     <div class="dropdown-header">
@@ -56,7 +62,21 @@
                         <a href="#" id="mark-all-read-btn" class="link-btn">Mark all read</a>
                     </div>
                     <div class="notification-list" id="notification-list-container">
-                        <div class="notification-empty">Loading notifications...</div>
+                        <div class="notification-item">
+                            <strong>⚠️ Metro Science Academy</strong>
+                            <div class="small-text">Pending registration review & approval.</div>
+                            <div class="small-text text-muted">10 mins ago</div>
+                        </div>
+                        <div class="notification-item">
+                            <strong>🚨 Horizon College</strong>
+                            <div class="small-text">Attendance rate dropped below 85% threshold.</div>
+                            <div class="small-text text-muted">1 hour ago</div>
+                        </div>
+                        <div class="notification-item">
+                            <strong>💰 Fee Collection Update</strong>
+                            <div class="small-text">Batch collection of $48,500 processed.</div>
+                            <div class="small-text text-muted">3 hours ago</div>
+                        </div>
                     </div>
                     <div class="dropdown-footer">
                         <a href="{{ url_for('notifications.index') }}">View All Notifications</a>
@@ -65,26 +85,23 @@
             </div>
 
             <!-- User Profile Dropdown -->
-            {% if session.get('user_id') %}
             <div class="dropdown-wrapper">
                 <button class="user-profile-btn" id="user-menu-btn">
-                    <div class="avatar">{{ session.get('user_name', 'U')[0] }}</div>
+                    <div class="avatar">SA</div>
                     <div class="user-meta">
-                        <span class="user-name">{{ session.get('user_name') }}</span>
-                        <span class="user-role">{{ session.get('user_role') }}</span>
+                        <span class="user-name">Super Admin</span>
+                        <span class="user-role">Super Admin</span>
                     </div>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" id="user-menu">
-                    <a href="{{ url_for('auth.profile') }}" class="dropdown-item">👤 My Profile</a>
+                    <a href="{{ url_for('auth.profile') }}" class="dropdown-item">👤 Profile Settings</a>
+                    <a href="{{ url_for('settings.index') }}" class="dropdown-item">⚙️ Platform Settings</a>
                     <a href="{{ url_for('auth.change_password') }}" class="dropdown-item">🔑 Change Password</a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ url_for('auth.logout') }}" class="dropdown-item text-danger">🚪 Logout</a>
                 </div>
             </div>
-            {% else %}
-            <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-sm">Login</a>
-            {% endif %}
         </div>
     </header>
 
@@ -93,13 +110,19 @@
         <!-- Sidebar Navigation -->
         <aside class="app-sidebar" id="app-sidebar">
             <nav class="sidebar-nav">
-                <div class="nav-section-title">Main Portal</div>
-                <a href="{{ url_for('dashboard.index') }}" class="sidebar-item {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+                <div class="nav-section-title">SUPER ADMIN PLATFORM</div>
+                <a href="{{ url_for('dashboard.index') }}" class="sidebar-item {% if request.endpoint == 'dashboard.index' or request.endpoint == 'index' %}active{% endif %}">
                     <span class="sidebar-icon">📊</span>
                     <span class="sidebar-label">Dashboard</span>
                 </a>
-
-                <div class="nav-section-title">Academic & Administration</div>
+                <a href="{{ url_for('institutions.index') }}" class="sidebar-item {% if 'institutions' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-icon">🏛️</span>
+                    <span class="sidebar-label">Institutions</span>
+                </a>
+                <a href="{{ url_for('users.index') }}" class="sidebar-item {% if 'users' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-icon">👥</span>
+                    <span class="sidebar-label">Users & Roles</span>
+                </a>
                 <a href="{{ url_for('students.index') }}" class="sidebar-item {% if 'students' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-icon">👨‍🎓</span>
                     <span class="sidebar-label">Students</span>
@@ -110,74 +133,42 @@
                 </a>
                 <a href="{{ url_for('academics.index') }}" class="sidebar-item {% if 'academics' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-icon">📚</span>
-                    <span class="sidebar-label">Courses & Subjects</span>
-                </a>
-                <a href="{{ url_for('admissions.index') }}" class="sidebar-item {% if 'admissions' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">📑</span>
-                    <span class="sidebar-label">Admissions</span>
+                    <span class="sidebar-label">Academic Management</span>
                 </a>
 
-                <div class="nav-section-title">Operations</div>
+                <div class="nav-section-title">OPERATIONS & FINANCE</div>
                 <a href="{{ url_for('attendance.index') }}" class="sidebar-item {% if 'attendance' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-icon">📅</span>
                     <span class="sidebar-label">Attendance</span>
                 </a>
-                <a href="{{ url_for('timetable.index') }}" class="sidebar-item {% if 'timetable' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">⏰</span>
-                    <span class="sidebar-label">Timetable</span>
-                </a>
-                <a href="{{ url_for('exams.index') }}" class="sidebar-item {% if 'exams' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">📝</span>
-                    <span class="sidebar-label">Examinations</span>
-                </a>
                 <a href="{{ url_for('fees.index') }}" class="sidebar-item {% if 'fees' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-icon">💳</span>
-                    <span class="sidebar-label">Fees & Payments</span>
+                    <span class="sidebar-label">Finance</span>
+                </a>
+                <a href="{{ url_for('reports.index') }}" class="sidebar-item {% if 'reports' in request.endpoint or 'analytics' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-icon">📈</span>
+                    <span class="sidebar-label">Reports</span>
                 </a>
 
-                <div class="nav-section-title">Campus Resources</div>
-                <a href="{{ url_for('library.index') }}" class="sidebar-item {% if 'library' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">📖</span>
-                    <span class="sidebar-label">Library</span>
-                </a>
-                <a href="{{ url_for('hostel.index') }}" class="sidebar-item {% if 'hostel' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">🏢</span>
-                    <span class="sidebar-label">Hostels</span>
-                </a>
-                <a href="{{ url_for('transport.index') }}" class="sidebar-item {% if 'transport' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">🚌</span>
-                    <span class="sidebar-label">Transport</span>
-                </a>
-
-                <div class="nav-section-title">Communication & Requests</div>
-                <a href="{{ url_for('leave.index') }}" class="sidebar-item {% if 'leave' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">✉️</span>
-                    <span class="sidebar-label">Leave Management</span>
-                </a>
-                <a href="{{ url_for('events.index') }}" class="sidebar-item {% if 'events' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">📢</span>
-                    <span class="sidebar-label">Events & News</span>
-                </a>
-
-                <div class="nav-section-title">Intelligence & Intelligence</div>
+                <div class="nav-section-title">GOVERNANCE & SYSTEM</div>
                 <a href="{{ url_for('ml.index') }}" class="sidebar-item {% if 'ml' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-icon">🤖</span>
-                    <span class="sidebar-label">ML Risk Intelligence</span>
-                </a>
-                <a href="{{ url_for('analytics.index') }}" class="sidebar-item {% if 'analytics' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">📈</span>
-                    <span class="sidebar-label">Reports & Analytics</span>
+                    <span class="sidebar-label">AI / Risk Analytics</span>
                 </a>
                 <a href="{{ url_for('audit.index') }}" class="sidebar-item {% if 'audit' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-icon">🛡️</span>
                     <span class="sidebar-label">Audit Logs</span>
+                </a>
+                <a href="{{ url_for('settings.index') }}" class="sidebar-item {% if 'settings' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span class="sidebar-label">Settings</span>
                 </a>
             </nav>
         </aside>
 
         <!-- Main Workspace Area -->
         <main class="app-main">
-            <!-- Toast Notifications -->
+            <!-- Toast Notifications Container -->
             <div class="toast-container" id="toast-container">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -203,14 +194,39 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>🔍 EduFlow Global ERP Search</h3>
+                    <h3>🔍 EduFlow Super Admin Search</h3>
                     <button class="modal-close-btn" id="close-search-modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" id="global-search-input" class="form-control form-control-lg" placeholder="Type name, student ID, course, book title, or exam..." autofocus>
-                    <div id="global-search-results" class="search-results-box">
-                        <div class="search-hint">Start typing to search across all EduFlow collections...</div>
+                    <input type="text" id="global-search-input" class="form-control form-control-lg" placeholder="Search Greenfield, St. Xavier, students, faculty, users, courses, reports..." autofocus>
+                    <div id="global-search-results" class="search-results-box m-t-15">
+                        <div class="search-hint">Type name, institution, or email to search across all EduFlow modules...</div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="help-modal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>❓ EduFlow Platform Help</h3>
+                    <button class="modal-close-btn" onclick="document.getElementById('help-modal').classList.remove('active')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="font-bold text-primary">Super Admin Quick Guide</h4>
+                    <p class="m-t-10">As Super Admin, you have full oversight across all institutions, users, financial ledgers, and academic reports.</p>
+                    <ul class="m-t-10 p-l-20">
+                        <li><strong>Institutions:</strong> View, create, edit, approve, suspend, or delete schools and colleges.</li>
+                        <li><strong>Users & Roles:</strong> Manage RBAC permissions for all 12 platform user roles.</li>
+                        <li><strong>Finance:</strong> Track nationwide tuition fee collections and pending balances.</li>
+                        <li><strong>AI Risk Analytics:</strong> Inspect student dropout risk predictions generated by local Random Forest models.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="document.getElementById('help-modal').classList.remove('active')">Close</button>
                 </div>
             </div>
         </div>
@@ -230,10 +246,7 @@
 </body>
 </html>
 
-
 <!-- ENTERPRISE EXPANDED FOOTER -->
-<!-- Template Component: base.html | Path: templates\base.html -->
-<!-- EduFlow ERP Full Stack Architecture Container -->
 <footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
     <div class="d-flex justify-content-between align-items-center">
         <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>

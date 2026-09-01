@@ -138,5 +138,15 @@
     "full_name": "Argus Filch",
     "status": "ACTIVE",
     "created_at": "2026-01-01 09:00:00"
+  },
+  {
+    "id": "usr-fac-0015",
+    "username": "miriyamrevathi4",
+    "email": "miriyamrevathi4@gmail.com",
+    "password": "pbkdf2:sha256:600000$VPHS9A9tE8Ra4BgV$df35453c9cb0056a62526ff173b440418e0e6d5c0c0f16e571f2f8daba6b9508",
+    "role": "TEACHER",
+    "full_name": "Revathi Miriyam",
+    "status": "ACTIVE",
+    "created_at": "2026-01-01 09:00:00"
   }
 ]

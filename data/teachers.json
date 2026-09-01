@@ -34,5 +34,22 @@
       "ECE-101-A"
     ],
     "status": "ACTIVE"
+  },
+  {
+    "id": "tch-0003",
+    "faculty_id": "FAC-2026-0003",
+    "user_id": "usr-fac-0015",
+    "full_name": "Revathi Miriyam",
+    "email": "miriyamrevathi4@gmail.com",
+    "phone": "6305785518",
+    "department": "Computer Science",
+    "designation": "Senior Professor",
+    "assigned_subject_ids": [
+      "sbj-002"
+    ],
+    "assigned_classes": [
+      "CS-101-A"
+    ],
+    "status": "ACTIVE"
   }
 ]

@@ -1,29 +1,70 @@
-/* Sidebar Styles */
+/* Super Admin SaaS / Education ERP Persistent Left Sidebar */
 .app-sidebar {
     width: 260px;
-    background-color: var(--bg-card);
-    border-right: 1px solid var(--border-color);
+    background: #0f172a; /* Deep Navy Blue */
+    color: #f8fafc;
+    border-right: 1px solid #1e293b;
     padding: 15px 0;
-    transition: width 0.3s ease;
+    transition: width 0.3s ease, min-width 0.3s ease;
+    flex-shrink: 0;
+    min-height: calc(100vh - 60px);
 }
+
 .app-sidebar.collapsed { width: 70px; }
-.app-sidebar.collapsed .sidebar-label, .app-sidebar.collapsed .nav-section-title { display: none; }
+.app-sidebar.collapsed .sidebar-label, 
+.app-sidebar.collapsed .nav-section-title { display: none; }
 
 .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
-.nav-section-title { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); padding: 12px 20px 4px; font-weight: 700; letter-spacing: 0.5px; }
+
+.nav-section-title { 
+    font-size: 0.6875rem; 
+    text-transform: uppercase; 
+    color: #64748b; 
+    padding: 16px 20px 6px; 
+    font-weight: 700; 
+    letter-spacing: 0.8px; 
+}
 
 .sidebar-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 20px;
-    color: var(--text-main);
+    padding: 11px 20px;
+    color: #94a3b8;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     border-left: 3px solid transparent;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
-.sidebar-item:hover { background-color: var(--bg-main); color: var(--primary); }
-.sidebar-item.active { background-color: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
-.sidebar-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+
+.sidebar-item:hover { 
+    background-color: #1e293b; 
+    color: #ffffff; 
+    border-left-color: #3b82f6;
+}
+
+.sidebar-item.active { 
+    background-color: #1e293b; 
+    color: #38bdf8; 
+    border-left-color: #2563eb; 
+    font-weight: 600; 
+}
+
+.sidebar-icon { 
+    font-size: 1.15rem; 
+    width: 24px; 
+    text-align: center; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-title-header {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-left: 15px;
+    padding-left: 15px;
+    border-left: 2px solid var(--border-color);
+}

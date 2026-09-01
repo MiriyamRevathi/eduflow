@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ institution.name }} - Institution Details{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-15">
+    <div>
+        <div class="small-text text-muted m-b-5">
+            <a href="{{ url_for('institutions.index') }}" class="hover-link">← Back to Institutions Directory</a>
+        </div>
+        <h2 class="font-bold text-primary">🏛️ {{ institution.name }}</h2>
+        <p class="text-muted small-text">Code: <code>{{ institution.code }}</code> | Type: <span class="badge badge-outline-secondary">{{ institution.type }}</span> | Established: {{ institution.established_year }}</p>
+    </div>
+    <div class="d-flex align-items-center gap-10">
+        {% if institution.status == 'ACTIVE' %}
+        <form action="{{ url_for('institutions.update_status', item_id=institution.id, status='SUSPENDED') }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-outline-danger btn-sm">🔒 Suspend Institution</button>
+        </form>
+        {% else %}
+        <form action="{{ url_for('institutions.update_status', item_id=institution.id, status='ACTIVE') }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-success btn-sm">✅ Activate Institution</button>
+        </form>
+        {% endif %}
+        <a href="{{ url_for('institutions.index') }}" class="btn btn-secondary btn-sm">Close</a>
+    </div>
+</div>
+
+<div class="grid-2 m-b-20">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3>📍 Location & Official Contact</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-item m-b-15">
+                <label>Address</label>
+                <div>{{ institution.address or '100 Education Blvd' }}</div>
+            </div>
+            <div class="detail-item m-b-15">
+                <label>City & State</label>
+                <div>{{ institution.city }}, {{ institution.state }}, {{ institution.country }}</div>
+            </div>
+            <div class="detail-item m-b-15">
+                <label>Contact Email</label>
+                <div><a href="mailto:{{ institution.email }}" class="text-primary">{{ institution.email }}</a></div>
+            </div>
+            <div class="detail-item">
+                <label>Phone Number</label>
+                <div>{{ institution.phone }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3>👤 Administrative Leadership</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-item m-b-15">
+                <label>Head Administrator / Principal</label>
+                <div class="font-bold text-main">{{ institution.admin_name }}</div>
+            </div>
+            <div class="detail-item m-b-15">
+                <label>Administrator Email</label>
+                <div><a href="mailto:{{ institution.admin_email }}" class="text-primary">{{ institution.admin_email }}</a></div>
+            </div>
+            <div class="detail-item m-b-15">
+                <label>Account Status</label>
+                <div>
+                    {% if institution.status == 'ACTIVE' %}
+                    <span class="badge badge-success">Active / Compliant</span>
+                    {% elif institution.status == 'PENDING' %}
+                    <span class="badge badge-warning">Pending Approval</span>
+                    {% else %}
+                    <span class="badge badge-danger">Suspended</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h3>📊 Campus Operational Metrics</h3>
+    </div>
+    <div class="card-body">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Enrolled Students</div>
+                <div class="stat-value text-primary">{{ "{:,}".format(institution.students_count) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Faculty Count</div>
+                <div class="stat-value text-info">{{ institution.faculty_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Attendance Rate</div>
+                <div class="stat-value text-success">{{ institution.attendance_rate }}%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Total YTD Revenue</div>
+                <div class="stat-value text-success">${{ "{:,.2f}".format(institution.fee_collection) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Pending Tuition Fees</div>
+                <div class="stat-value text-danger">${{ "{:,.2f}".format(institution.pending_fees) }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
