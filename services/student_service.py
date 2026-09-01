@@ -32,12 +32,14 @@ class StudentService:
         self.leave_repo = LeaveRepository()
         self.audit_repo = AuditRepository()
 
-    def get_paginated_students(self, page: int = 1, per_page: int = 10, search_query: str = None, course_id: str = None, status: str = None) -> Dict[str, Any]:
+    def get_paginated_students(self, page: int = 1, per_page: int = 10, search_query: str = None, course_id: str = None, status: str = None, institution_id: str = None) -> Dict[str, Any]:
         criteria = {}
         if course_id:
             criteria['course_id'] = course_id
         if status:
             criteria['status'] = status
+        if institution_id and institution_id != 'ALL':
+            criteria['institution_id'] = institution_id
 
         result = self.student_repo.paginate(
             page=page,

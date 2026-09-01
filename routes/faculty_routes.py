@@ -8,18 +8,21 @@ faculty_bp = Blueprint('faculty', __name__, url_prefix='/faculty')
 faculty_service = FacultyService()
 subject_repo = SubjectRepository()
 
+@faculty_bp.route('/super-admin/faculty')
 @faculty_bp.route('/')
 @login_required
 def index():
     page = request.args.get('page', 1, type=int)
     search_q = request.args.get('q', '').strip()
     department = request.args.get('department', '')
+    selected_inst_id = session.get('selected_institution_id', 'ALL')
 
     result = faculty_service.get_paginated_faculty(
         page=page,
         per_page=10,
         search_query=search_q,
-        department=department
+        department=department,
+        institution_id=selected_inst_id
     )
 
     return render_template(

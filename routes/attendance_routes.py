@@ -7,14 +7,18 @@ from utils.datetime_utils import DateTimeUtils
 attendance_bp = Blueprint('attendance', __name__, url_prefix='/attendance')
 attendance_service = AttendanceService()
 
+@attendance_bp.route('/super-admin/attendance')
 @attendance_bp.route('/')
 @login_required
 def index():
     date_str = request.args.get('date', DateTimeUtils.current_date_str())
     class_name = request.args.get('class_name', 'CS-101')
     section = request.args.get('section', 'A')
+    selected_inst_id = session.get('selected_institution_id', 'ALL')
 
     overview = attendance_service.get_attendance_overview(date_str, class_name, section)
+    if selected_inst_id != 'ALL' and 'records' in overview:
+        overview['records'] = [r for r in overview['records'] if r.get('institution_id') == selected_inst_id or not r.get('institution_id')]
     return render_template('attendance/index.html', overview=overview)
 
 @attendance_bp.route('/mark', methods=['GET', 'POST'])

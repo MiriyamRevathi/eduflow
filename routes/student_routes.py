@@ -8,6 +8,7 @@ students_bp = Blueprint('students', __name__, url_prefix='/students')
 student_service = StudentService()
 course_repo = CourseRepository()
 
+@students_bp.route('/super-admin/students')
 @students_bp.route('/')
 @login_required
 def index():
@@ -15,13 +16,15 @@ def index():
     search_q = request.args.get('q', '').strip()
     course_id = request.args.get('course_id', '')
     status = request.args.get('status', '')
+    selected_inst_id = session.get('selected_institution_id', 'ALL')
 
     result = student_service.get_paginated_students(
         page=page,
         per_page=10,
         search_query=search_q,
         course_id=course_id,
-        status=status
+        status=status,
+        institution_id=selected_inst_id
     )
     courses = course_repo.find_all()
 

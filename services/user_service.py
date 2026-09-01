@@ -42,11 +42,12 @@ class UserService:
         per_page: int = 10,
         query: Optional[str] = None,
         status: Optional[str] = None,
+        institution_id: Optional[str] = None,
         sort_by: str = 'id',
         order: str = 'asc'
     ) -> Dict[str, Any]:
         """Fetch paginated records with text query and status filters."""
-        return self.repo.get_paginated_filtered(
+        res = self.repo.get_paginated_filtered(
             page=page,
             per_page=per_page,
             status=status,
@@ -54,6 +55,11 @@ class UserService:
             sort_by=sort_by,
             order=order
         )
+        if institution_id and institution_id != 'ALL':
+            filtered_items = [u for u in res['items'] if u.get('institution_id') == institution_id]
+            res['items'] = filtered_items
+            res['total'] = len(filtered_items)
+        return res
 
     def create_record(self, payload: Dict[str, Any], actor_email: str, actor_role: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
         """Create new record with schema sanitization and audit logging."""

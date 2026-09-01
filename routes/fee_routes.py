@@ -8,10 +8,14 @@ fees_bp = Blueprint('fees', __name__, url_prefix='/fees')
 fee_service = FeeService()
 student_repo = StudentRepository()
 
+@fees_bp.route('/super-admin/fees')
 @fees_bp.route('/')
 @login_required
 def index():
+    selected_inst_id = session.get('selected_institution_id', 'ALL')
     fees = fee_service.get_all_fees()
+    if selected_inst_id != 'ALL':
+        fees = [f for f in fees if f.get('institution_id') == selected_inst_id]
     return render_template('fees/index.html', fees=fees)
 
 @fees_bp.route('/new', methods=['GET', 'POST'])

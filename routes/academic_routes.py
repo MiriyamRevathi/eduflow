@@ -6,10 +6,14 @@ from security.session import SessionManager
 academics_bp = Blueprint('academics', __name__, url_prefix='/academics')
 academic_service = AcademicService()
 
+@academics_bp.route('/super-admin/programs')
 @academics_bp.route('/')
 @login_required
 def index():
+    selected_inst_id = session.get('selected_institution_id', 'ALL')
     courses = academic_service.get_all_courses_with_subjects()
+    if selected_inst_id != 'ALL':
+        courses = [c for c in courses if c.get('institution_id') == selected_inst_id]
     return render_template('academics/index.html', courses=courses)
 
 @academics_bp.route('/courses/new', methods=['GET', 'POST'])

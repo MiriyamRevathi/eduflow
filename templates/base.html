@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Super Admin Dashboard{% endblock %} - EduFlow ERP</title>
+    <!-- Inter Font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Main CSS Suites -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
@@ -21,85 +26,52 @@
     <header class="top-nav">
         <div class="nav-left">
             <button id="sidebar-toggle-btn" class="icon-btn" title="Toggle Sidebar">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             </button>
             <a href="{{ url_for('dashboard.index') }}" class="brand-link">
-                <span class="brand-icon">🎓</span>
                 <span class="brand-text">EduFlow <span class="brand-badge">ERP</span></span>
             </a>
-            <span class="page-title-header">Super Admin Dashboard</span>
+            <span class="page-title-header">Super Admin</span>
         </div>
 
         <div class="nav-center">
-            <div class="global-search-trigger" id="open-global-search">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <span>Search institutions, students, faculty, users, courses... (Ctrl+K)</span>
-                <kbd>Ctrl+K</kbd>
+            <!-- Global Institution Selector -->
+            <div class="global-institution-bar">
+                <span class="institution-selector-label">Institution:</span>
+                <select id="global-institution-select" class="form-control form-control-sm global-institution-dropdown" onchange="switchGlobalInstitution(this.value)">
+                    <option value="ALL" {% if selected_institution_id == 'ALL' %}selected{% endif %}>All Institutions</option>
+                    {% for inst in all_institutions %}
+                    <option value="{{ inst.id }}" {% if selected_institution_id == inst.id %}selected{% endif %}>{{ inst.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
 
         <div class="nav-right">
+            <!-- Global Search Trigger -->
+            <div class="global-search-trigger" id="open-global-search">
+                <span>Search...</span>
+                <kbd>Ctrl+K</kbd>
+            </div>
+
             <!-- Theme Toggle -->
             <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light/Dark Theme">
-                <span class="theme-icon-light">☀️</span>
-                <span class="theme-icon-dark">🌙</span>
+                <span class="theme-icon-light">Theme</span>
             </button>
-
-            <!-- Help Button -->
-            <button id="help-modal-btn" class="icon-btn" title="System Help & Documentation" onclick="document.getElementById('help-modal').classList.add('active')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </button>
-
-            <!-- Notifications Center -->
-            <div class="dropdown-wrapper">
-                <button id="notifications-btn" class="icon-btn nav-badge-container" title="Notifications">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    <span id="unread-notification-count" class="badge badge-pill badge-danger" style="display:inline-block;">3</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right notification-dropdown" id="notification-menu">
-                    <div class="dropdown-header">
-                        <span>Notifications</span>
-                        <a href="#" id="mark-all-read-btn" class="link-btn">Mark all read</a>
-                    </div>
-                    <div class="notification-list" id="notification-list-container">
-                        <div class="notification-item">
-                            <strong>⚠️ Metro Science Academy</strong>
-                            <div class="small-text">Pending registration review & approval.</div>
-                            <div class="small-text text-muted">10 mins ago</div>
-                        </div>
-                        <div class="notification-item">
-                            <strong>🚨 Horizon College</strong>
-                            <div class="small-text">Attendance rate dropped below 85% threshold.</div>
-                            <div class="small-text text-muted">1 hour ago</div>
-                        </div>
-                        <div class="notification-item">
-                            <strong>💰 Fee Collection Update</strong>
-                            <div class="small-text">Batch collection of $48,500 processed.</div>
-                            <div class="small-text text-muted">3 hours ago</div>
-                        </div>
-                    </div>
-                    <div class="dropdown-footer">
-                        <a href="{{ url_for('notifications.index') }}">View All Notifications</a>
-                    </div>
-                </div>
-            </div>
 
             <!-- User Profile Dropdown -->
             <div class="dropdown-wrapper">
                 <button class="user-profile-btn" id="user-menu-btn">
-                    <div class="avatar">SA</div>
                     <div class="user-meta">
                         <span class="user-name">Super Admin</span>
-                        <span class="user-role">Super Admin</span>
                     </div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" id="user-menu">
-                    <a href="{{ url_for('auth.profile') }}" class="dropdown-item">👤 Profile Settings</a>
-                    <a href="{{ url_for('settings.index') }}" class="dropdown-item">⚙️ Platform Settings</a>
-                    <a href="{{ url_for('auth.change_password') }}" class="dropdown-item">🔑 Change Password</a>
+                    <a href="{{ url_for('auth.profile') }}" class="dropdown-item">Profile Settings</a>
+                    <a href="{{ url_for('settings.index') }}" class="dropdown-item">System Settings</a>
+                    <a href="{{ url_for('auth.change_password') }}" class="dropdown-item">Change Password</a>
                     <div class="dropdown-divider"></div>
-                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item text-danger">🚪 Logout</a>
+                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item text-danger">Logout</a>
                 </div>
             </div>
         </div>
@@ -107,61 +79,71 @@
 
     <!-- Main Layout Grid -->
     <div class="app-layout">
-        <!-- Sidebar Navigation -->
+        <!-- Text-based Sidebar Navigation -->
         <aside class="app-sidebar" id="app-sidebar">
             <nav class="sidebar-nav">
-                <div class="nav-section-title">SUPER ADMIN PLATFORM</div>
-                <a href="{{ url_for('dashboard.index') }}" class="sidebar-item {% if request.endpoint == 'dashboard.index' or request.endpoint == 'index' %}active{% endif %}">
-                    <span class="sidebar-icon">📊</span>
+                <div class="nav-section-title">SUPER ADMIN</div>
+                <a href="{{ url_for('dashboard.index') }}" class="sidebar-item {% if request.endpoint and (request.endpoint == 'dashboard.index' or request.endpoint == 'index') %}active{% endif %}">
                     <span class="sidebar-label">Dashboard</span>
                 </a>
-                <a href="{{ url_for('institutions.index') }}" class="sidebar-item {% if 'institutions' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">🏛️</span>
+
+                <div class="nav-section-title">Institution Management</div>
+                <a href="{{ url_for('institutions.index') }}" class="sidebar-item {% if request.endpoint and 'institutions' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-label">Institutions</span>
                 </a>
-                <a href="{{ url_for('users.index') }}" class="sidebar-item {% if 'users' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">👥</span>
-                    <span class="sidebar-label">Users & Roles</span>
-                </a>
-                <a href="{{ url_for('students.index') }}" class="sidebar-item {% if 'students' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">👨‍🎓</span>
-                    <span class="sidebar-label">Students</span>
-                </a>
-                <a href="{{ url_for('faculty.index') }}" class="sidebar-item {% if 'faculty' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">👩‍🏫</span>
-                    <span class="sidebar-label">Faculty</span>
-                </a>
-                <a href="{{ url_for('academics.index') }}" class="sidebar-item {% if 'academics' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">📚</span>
-                    <span class="sidebar-label">Academic Management</span>
+                <a href="{{ url_for('institutions.view', item_id='inst-001') }}" class="sidebar-item">
+                    <span class="sidebar-label">Institution Details</span>
                 </a>
 
-                <div class="nav-section-title">OPERATIONS & FINANCE</div>
-                <a href="{{ url_for('attendance.index') }}" class="sidebar-item {% if 'attendance' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">📅</span>
+                <div class="nav-section-title">User Management</div>
+                <a href="{{ url_for('users.index') }}" class="sidebar-item {% if request.endpoint and 'users' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-label">Users & Roles</span>
+                </a>
+
+                <div class="nav-section-title">Academic Management</div>
+                <a href="{{ url_for('students.index') }}" class="sidebar-item {% if request.endpoint and 'students' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-label">Students</span>
+                </a>
+                <a href="{{ url_for('faculty.index') }}" class="sidebar-item {% if request.endpoint and 'faculty' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-label">Faculty & Staff</span>
+                </a>
+                <a href="{{ url_for('academics.index') }}" class="sidebar-item {% if request.endpoint and 'academics' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-label">Academic Programs</span>
+                </a>
+                <a href="{{ url_for('academics.index') }}" class="sidebar-item">
+                    <span class="sidebar-label">Courses / Subjects</span>
+                </a>
+
+                <div class="nav-section-title">Operations</div>
+                <a href="{{ url_for('attendance.index') }}" class="sidebar-item {% if request.endpoint and 'attendance' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-label">Attendance</span>
                 </a>
-                <a href="{{ url_for('fees.index') }}" class="sidebar-item {% if 'fees' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">💳</span>
-                    <span class="sidebar-label">Finance</span>
+                <a href="{{ url_for('fees.index') }}" class="sidebar-item {% if request.endpoint and 'fees' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-label">Fee Management</span>
                 </a>
-                <a href="{{ url_for('reports.index') }}" class="sidebar-item {% if 'reports' in request.endpoint or 'analytics' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">📈</span>
+                <a href="{{ url_for('reports.index') }}" class="sidebar-item {% if request.endpoint and ('reports' in request.endpoint or 'analytics' in request.endpoint) %}active{% endif %}">
                     <span class="sidebar-label">Reports</span>
                 </a>
 
-                <div class="nav-section-title">GOVERNANCE & SYSTEM</div>
-                <a href="{{ url_for('ml.index') }}" class="sidebar-item {% if 'ml' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">🤖</span>
-                    <span class="sidebar-label">AI / Risk Analytics</span>
-                </a>
-                <a href="{{ url_for('audit.index') }}" class="sidebar-item {% if 'audit' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">🛡️</span>
+                <div class="nav-section-title">Governance & System</div>
+                <a href="{{ url_for('audit.index') }}" class="sidebar-item {% if request.endpoint and 'audit' in request.endpoint %}active{% endif %}">
                     <span class="sidebar-label">Audit Logs</span>
                 </a>
-                <a href="{{ url_for('settings.index') }}" class="sidebar-item {% if 'settings' in request.endpoint %}active{% endif %}">
-                    <span class="sidebar-icon">⚙️</span>
-                    <span class="sidebar-label">Settings</span>
+                <a href="{{ url_for('settings.index') }}" class="sidebar-item {% if request.endpoint and 'settings' in request.endpoint %}active{% endif %}">
+                    <span class="sidebar-label">System Settings</span>
+                </a>
+
+                <div class="nav-section-title">Support</div>
+                <a href="#" class="sidebar-item" onclick="openModal('help-modal')">
+                    <span class="sidebar-label">Help & Support</span>
+                </a>
+
+                <div class="nav-section-title">Account</div>
+                <a href="{{ url_for('auth.profile') }}" class="sidebar-item">
+                    <span class="sidebar-label">Profile</span>
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="sidebar-item text-danger">
+                    <span class="sidebar-label">Logout</span>
                 </a>
             </nav>
         </aside>
@@ -194,13 +176,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>🔍 EduFlow Super Admin Search</h3>
+                    <h3>Search EduFlow ERP</h3>
                     <button class="modal-close-btn" id="close-search-modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" id="global-search-input" class="form-control form-control-lg" placeholder="Search Greenfield, St. Xavier, students, faculty, users, courses, reports..." autofocus>
+                    <input type="text" id="global-search-input" class="form-control form-control-lg" placeholder="Search institutions, students, faculty, users, courses..." autofocus>
                     <div id="global-search-results" class="search-results-box m-t-15">
-                        <div class="search-hint">Type name, institution, or email to search across all EduFlow modules...</div>
+                        <div class="search-hint">Type to search records...</div>
                     </div>
                 </div>
             </div>
@@ -212,26 +194,35 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>❓ EduFlow Platform Help</h3>
-                    <button class="modal-close-btn" onclick="document.getElementById('help-modal').classList.remove('active')">&times;</button>
+                    <h3>Help & Support</h3>
+                    <button class="modal-close-btn" onclick="closeModal('help-modal')">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <h4 class="font-bold text-primary">Super Admin Quick Guide</h4>
-                    <p class="m-t-10">As Super Admin, you have full oversight across all institutions, users, financial ledgers, and academic reports.</p>
-                    <ul class="m-t-10 p-l-20">
-                        <li><strong>Institutions:</strong> View, create, edit, approve, suspend, or delete schools and colleges.</li>
-                        <li><strong>Users & Roles:</strong> Manage RBAC permissions for all 12 platform user roles.</li>
-                        <li><strong>Finance:</strong> Track nationwide tuition fee collections and pending balances.</li>
-                        <li><strong>AI Risk Analytics:</strong> Inspect student dropout risk predictions generated by local Random Forest models.</li>
-                    </ul>
+                    <h4 class="font-bold text-primary">Super Admin Guide</h4>
+                    <p class="m-t-10">As Super Admin, you manage multiple institutions. Use the top global institution selector to switch between viewing aggregated data or specific institution records.</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" onclick="document.getElementById('help-modal').classList.remove('active')">Close</button>
+                    <button class="btn btn-secondary" onclick="closeModal('help-modal')">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+    function switchGlobalInstitution(instId) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('inst_id', instId);
+        window.location.href = url.toString();
+    }
+    function openModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('active');
+    }
+    function closeModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+    }
+    </script>
     <!-- Core JavaScript Scripts -->
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modals.js') }}"></script>
@@ -245,11 +236,3 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
-
-<!-- ENTERPRISE EXPANDED FOOTER -->
-<footer class="enterprise-page-footer m-t-30 p-20 border-top text-center text-muted small-text">
-    <div class="d-flex justify-content-between align-items-center">
-        <div><strong>EduFlow ERP v1.0 Enterprise Edition</strong> — School & College Management System</div>
-        <div>Active Environment: <code>Production</code> | Security Status: <code>RBAC Enforced</code></div>
-    </div>
-</footer>

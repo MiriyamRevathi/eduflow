@@ -2,7 +2,8 @@
   {
     "id": "tch-001",
     "faculty_id": "FAC-2026-0001",
-    "user_id": "usr-005",
+    "institution_id": "inst-001",
+    "user_id": "usr-004",
     "full_name": "Dr. Robert Langdon",
     "email": "teacher@eduflow.local",
     "phone": "+1 555-0199",
@@ -21,7 +22,8 @@
   {
     "id": "tch-002",
     "faculty_id": "FAC-2026-0002",
-    "user_id": "usr-006",
+    "institution_id": "inst-002",
+    "user_id": "usr-008",
     "full_name": "Prof. Sarah Connor",
     "email": "faculty@eduflow.local",
     "phone": "+1 555-0288",
@@ -36,19 +38,20 @@
     "status": "ACTIVE"
   },
   {
-    "id": "tch-0003",
+    "id": "tch-003",
     "faculty_id": "FAC-2026-0003",
-    "user_id": "usr-fac-0015",
-    "full_name": "Revathi Miriyam",
-    "email": "miriyamrevathi4@gmail.com",
-    "phone": "6305785518",
+    "institution_id": "inst-008",
+    "user_id": "usr-008",
+    "full_name": "Prof. David Kingsley",
+    "email": "d.kingsley@trinityglobal.edu",
+    "phone": "+1 555-8901",
     "department": "Computer Science",
-    "designation": "Senior Professor",
+    "designation": "Dean of Faculty",
     "assigned_subject_ids": [
-      "sbj-002"
+      "sbj-001"
     ],
     "assigned_classes": [
-      "CS-101-A"
+      "ENG-101-A"
     ],
     "status": "ACTIVE"
   }

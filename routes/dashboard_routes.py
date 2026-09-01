@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session
 from repositories.institution_repository import InstitutionRepository
 from repositories.student_repository import StudentRepository
 from repositories.teacher_repository import TeacherRepository
@@ -19,21 +19,42 @@ fee_repo = FeeRepository()
 attendance_repo = AttendanceRepository()
 audit_repo = AuditRepository()
 
+@dashboard_bp.route('/super-admin/dashboard')
 @dashboard_bp.route('/dashboard')
 @dashboard_bp.route('/')
 @login_required
 def index():
     user_role = SessionManager.get_current_role()
     period = request.args.get('period', 'this_month')
+    selected_inst_id = session.get('selected_institution_id', 'ALL')
 
-    institutions = inst_repo.find_all()
+    all_institutions = inst_repo.find_all()
 
-    total_inst = len(institutions)
-    total_students = sum(i.get('students_count', 0) for i in institutions)
-    total_faculty = sum(i.get('faculty_count', 0) for i in institutions)
-    total_active_users = user_repo.count() + total_students
-    total_fee_collection = sum(i.get('fee_collection', 0.0) for i in institutions)
-    total_pending_fees = sum(i.get('pending_fees', 0.0) for i in institutions)
+    if selected_inst_id != 'ALL':
+        institutions = [i for i in all_institutions if i.get('id') == selected_inst_id]
+        inst_info = inst_repo.find_by_id(selected_inst_id)
+        
+        all_students = [s for s in student_repo.find_all() if s.get('institution_id') == selected_inst_id]
+        all_faculty = [t for t in teacher_repo.find_all() if t.get('institution_id') == selected_inst_id]
+        all_users = [u for u in user_repo.find_all() if u.get('institution_id') == selected_inst_id]
+        all_fees = [f for f in fee_repo.find_all() if f.get('institution_id') == selected_inst_id]
+
+        total_inst = 1
+        total_students = len(all_students) if all_students else inst_info.get('students_count', 0) if inst_info else 0
+        total_faculty = len(all_faculty) if all_faculty else inst_info.get('faculty_count', 0) if inst_info else 0
+        total_active_users = len(all_users) if all_users else total_students + total_faculty
+        total_fee_collection = sum(f.get('paid_amount', 0.0) for f in all_fees) if all_fees else inst_info.get('fee_collection', 0.0) if inst_info else 0.0
+        total_pending_fees = sum(f.get('pending_amount', 0.0) for f in all_fees) if all_fees else inst_info.get('pending_fees', 0.0) if inst_info else 0.0
+        avg_attendance = inst_info.get('attendance_rate', 95.0) if inst_info else 95.0
+    else:
+        institutions = all_institutions
+        total_inst = len(institutions)
+        total_students = sum(i.get('students_count', 0) for i in institutions)
+        total_faculty = sum(i.get('faculty_count', 0) for i in institutions)
+        total_active_users = user_repo.count() + total_students
+        total_fee_collection = sum(i.get('fee_collection', 0.0) for i in institutions)
+        total_pending_fees = sum(i.get('pending_fees', 0.0) for i in institutions)
+        avg_attendance = 94.2
 
     stats = {
         'total_institutions': total_inst,
@@ -42,57 +63,34 @@ def index():
         'total_active_users': total_active_users,
         'total_fee_collection': total_fee_collection,
         'total_pending_fees': total_pending_fees,
-        'avg_attendance': 94.2
+        'avg_attendance': avg_attendance
     }
 
     requires_attention = [
         {
             'id': 'att-01',
-            'type': 'warning',
-            'icon': '⚠️',
-            'title': 'Metro Science Academy — Pending Registration Approval',
-            'description': 'Submitted documentation 2 days ago. Requires Super Admin verification.',
-            'badge': 'Pending Approval',
-            'badge_class': 'badge-warning',
+            'title': 'Metro Science Academy — Pending Registration Review',
+            'description': 'Registration submitted. Requires Super Admin verification.',
             'action_label': 'Approve',
-            'action_url': '/institutions?status=PENDING'
+            'action_url': '/institutions/?status=PENDING'
         },
         {
             'id': 'att-02',
-            'type': 'danger',
-            'icon': '🚨',
-            'title': 'Horizon College of Arts — Low Attendance Alert',
-            'description': 'Monthly attendance dropped to 84.1% (below 85% compliance threshold).',
-            'badge': 'Low Attendance',
-            'badge_class': 'badge-danger',
+            'title': 'Horizon College of Arts — Low Attendance Warning',
+            'description': 'Attendance dropped to 84.1% (below 85% compliance threshold).',
             'action_label': 'Resolve',
-            'action_url': '/attendance'
+            'action_url': '/attendance/'
         },
         {
             'id': 'att-03',
-            'type': 'warning',
-            'icon': '💰',
-            'title': 'Royal Academy High — Overdue Fee Balances',
-            'description': '$142,000 in tuition fees past due date by over 30 days.',
-            'badge': 'Overdue Fees',
-            'badge_class': 'badge-warning',
+            'title': 'Royal Academy High — Overdue Fees Notice',
+            'description': '$142,000 in tuition fees past due date.',
             'action_label': 'Send Notice',
-            'action_url': '/fees'
-        },
-        {
-            'id': 'att-04',
-            'type': 'secondary',
-            'icon': '🔒',
-            'title': 'Pacific Institute — Suspended Account Review',
-            'description': 'Account temporarily suspended during regulatory audit.',
-            'badge': 'Suspended',
-            'badge_class': 'badge-secondary',
-            'action_label': 'Manage',
-            'action_url': '/institutions?status=SUSPENDED'
+            'action_url': '/fees/'
         }
     ]
 
-    recent_activities = audit_repo.get_recent(limit=8)
+    recent_activities = audit_repo.get_recent(limit=6)
 
     return render_template(
         'dashboard/index.html',
@@ -101,5 +99,6 @@ def index():
         requires_attention=requires_attention,
         recent_activities=recent_activities,
         user_role=user_role,
-        selected_period=period
+        selected_period=period,
+        selected_inst_id=selected_inst_id
     )

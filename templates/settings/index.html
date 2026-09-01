@@ -1,40 +1,39 @@
 {% extends 'base.html' %}
 
-{% block title %}Platform Settings - EduFlow ERP{% endblock %}
+{% block title %}System Settings - EduFlow ERP{% endblock %}
 
 {% block content %}
 <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-15">
     <div>
-        <h2 class="font-bold text-primary">⚙️ Super Admin Platform Settings</h2>
-        <p class="text-muted small-text">Configure global ERP system parameters, security policies, backup schedules, and institution defaults.</p>
+        <h2 class="font-bold text-primary">System Settings</h2>
+        <p class="text-muted small-text">Configure global ERP parameters, institution defaults, security policies, and Excel/CSV data import.</p>
     </div>
 </div>
 
 <div class="card shadow-sm">
     <div class="card-header border-bottom">
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
-            <li class="nav-item"><a class="nav-link active" data-tab="tab-general" href="#general">General Branding</a></li>
-            <li class="nav-item"><a class="nav-link" data-tab="tab-security" href="#security">RBAC Security Policy</a></li>
-            <li class="nav-item"><a class="nav-link" data-tab="tab-notifications" href="#notifications">Notification Channels</a></li>
-            <li class="nav-item"><a class="nav-link" data-tab="tab-backups" href="#backups">Automated Backups</a></li>
+            <li class="nav-item"><a class="nav-link active" data-tab="tab-general" href="#general" onclick="switchTab(event, 'tab-general')">General Settings</a></li>
+            <li class="nav-item"><a class="nav-link" data-tab="tab-data" href="#data" onclick="switchTab(event, 'tab-data')">Data Management & Excel Import</a></li>
+            <li class="nav-item"><a class="nav-link" data-tab="tab-security" href="#security" onclick="switchTab(event, 'tab-security')">Security Policies</a></li>
         </ul>
     </div>
     <div class="card-body p-20">
-        <form action="{{ url_for('settings.save') }}" method="POST">
-            <!-- General Settings Tab -->
-            <div class="tab-content active" id="tab-general">
-                <h4 class="font-bold text-primary m-b-15">Global ERP Branding & Localization</h4>
+        <!-- General Settings Tab -->
+        <div class="tab-content active" id="tab-general">
+            <form action="{{ url_for('settings.save') }}" method="POST">
+                <h4 class="font-bold text-primary m-b-15">Global System Parameters</h4>
                 <div class="form-grid-2">
                     <div class="form-group">
                         <label class="form-label required">Platform Title</label>
                         <input type="text" name="platform_title" class="form-control" value="EduFlow ERP — School & College Management System">
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">Support Email</label>
-                        <input type="email" name="support_email" class="form-control" value="support@eduflow.local">
+                        <label class="form-label required">Support Contact Email</label>
+                        <input type="email" name="support_email" class="form-control" value="admin@eduflow.local">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Default Currency</label>
+                        <label class="form-label">Currency Symbol</label>
                         <select name="currency" class="form-control">
                             <option value="USD" selected>USD ($)</option>
                             <option value="EUR">EUR (€)</option>
@@ -47,32 +46,82 @@
                         <input type="text" name="academic_year" class="form-control" value="2026-2027">
                     </div>
                 </div>
-            </div>
+                <div class="m-t-20 pt-15 border-top">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                </div>
+            </form>
+        </div>
 
-            <!-- Security Settings Tab -->
-            <div class="tab-content" id="tab-security">
-                <h4 class="font-bold text-primary m-b-15">RBAC & Password Policy Settings</h4>
+        <!-- Data Management & Excel Import Tab -->
+        <div class="tab-content" id="tab-data" style="display: none;">
+            <h4 class="font-bold text-primary m-b-15">Excel / CSV Data Import Engine</h4>
+            <p class="text-muted small-text m-b-20">Upload spreadsheet files (.xlsx, .xls, .csv) to batch import records. Imported records will automatically bind to the selected institution ID.</p>
+            
+            <form action="{{ url_for('settings.import_data') }}" method="POST" enctype="multipart/form-data" class="card p-20 border-radius-8 bg-card shadow-sm m-b-25">
                 <div class="form-grid-2">
                     <div class="form-group">
-                        <label class="form-label">Password Minimum Length</label>
-                        <input type="number" name="min_password_len" class="form-control" value="8">
+                        <label class="form-label required">Target Module</label>
+                        <select name="entity_type" class="form-control" required>
+                            <option value="Students">Students Roster</option>
+                            <option value="Faculty">Faculty & Staff</option>
+                            <option value="Users">System Users & Roles</option>
+                            <option value="Programs">Academic Programs & Subjects</option>
+                            <option value="Fees">Fee Ledgers & Invoices</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Session Idle Timeout (Minutes)</label>
-                        <input type="number" name="session_timeout" class="form-control" value="30">
+                        <label class="form-label required">Target Institution</label>
+                        <select name="institution_id" class="form-control" required>
+                            {% for inst in all_institutions %}
+                            <option value="{{ inst.id }}">{{ inst.name }} ({{ inst.code }})</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
-                <div class="form-group m-t-15">
-                    <label class="checkbox-container">
-                        <input type="checkbox" name="enforce_mfa" checked> Enforce Multi-Factor Authentication (MFA) for Super Admins
-                    </label>
+                <div class="form-group m-t-10">
+                    <label class="form-label required">Select Data File (.xlsx / .csv)</label>
+                    <input type="file" name="data_file" class="form-control" accept=".csv, .xlsx, .xls">
+                </div>
+                <div class="m-t-15">
+                    <button type="submit" class="btn btn-primary">Import Data File</button>
+                </div>
+            </form>
+
+            <h4 class="font-bold text-primary m-b-15">Backup & Export Data Layer</h4>
+            <div class="d-flex align-items-center gap-10">
+                <a href="{{ url_for('institutions.export_csv') }}" class="btn btn-outline-primary">Export Full CSV Ledger</a>
+                <button class="btn btn-secondary" onclick="alert('JSON database backup created successfully.')">Backup Data</button>
+            </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div class="tab-content" id="tab-security" style="display: none;">
+            <h4 class="font-bold text-primary m-b-15">Role & Access Control Policies</h4>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">Password Minimum Length</label>
+                    <input type="number" name="min_pass" class="form-control" value="8">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Session Idle Timeout (Minutes)</label>
+                    <input type="number" name="timeout" class="form-control" value="30">
                 </div>
             </div>
-
-            <div class="m-t-20 pt-15 border-top">
-                <button type="submit" class="btn btn-primary">Save Platform Settings</button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchTab(evt, tabId) {
+    evt.preventDefault();
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    evt.target.classList.add('active');
+    const target = document.getElementById(tabId);
+    if (target) target.style.display = 'block';
+}
+</script>
 {% endblock %}

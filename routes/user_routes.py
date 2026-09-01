@@ -10,6 +10,7 @@ from security.session import SessionManager
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 service = UserService()
 
+@users_bp.route('/super-admin/users')
 @users_bp.route('/')
 @login_required
 def index():
@@ -17,8 +18,9 @@ def index():
     page = request.args.get('page', 1, type=int)
     search_q = request.args.get('q', '').strip()
     status = request.args.get('status', '')
+    selected_inst_id = session.get('selected_institution_id', 'ALL')
 
-    result = service.get_paginated(page=page, per_page=10, query=search_q, status=status)
+    result = service.get_paginated(page=page, per_page=10, query=search_q, status=status, institution_id=selected_inst_id)
     return render_template('users/index.html', items=result['items'], pagination=result, search_q=search_q, status=status)
 
 @users_bp.route('/new', methods=['GET', 'POST'])

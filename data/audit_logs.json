@@ -1,200 +1,42 @@
 [
   {
     "id": "aud-001",
+    "institution_id": "inst-001",
+    "timestamp": "2026-09-01 10:15:00",
     "user": "admin@eduflow.local",
     "role": "SUPER_ADMIN",
-    "action": "SYSTEM_SEED",
-    "entity": "SYSTEM",
-    "details": "Initial system data seeded successfully.",
-    "timestamp": "2026-01-01 09:00:00"
+    "action": "CREATE_INSTITUTION",
+    "module": "Institutions",
+    "description": "Registered Greenfield International School",
+    "status": "SUCCESS"
   },
   {
-    "id": "841346db-ced4-40e4-864f-25e9a1e35814",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 11:51:10"
+    "id": "aud-002",
+    "institution_id": "inst-002",
+    "timestamp": "2026-09-01 09:30:00",
+    "user": "schooladmin@eduflow.local",
+    "role": "SCHOOL_ADMIN",
+    "action": "UPDATE_FEE",
+    "module": "Finance",
+    "description": "Updated tuition fee ledger for St. Xavier University",
+    "status": "SUCCESS"
   },
   {
-    "id": "ffa67726-e33b-4bd8-8dc6-1fe3068195a0",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 11:52:10"
-  },
-  {
-    "id": "3c7ffb7f-0fc7-4dfd-b9d0-d0af126734a9",
+    "id": "06806683-f71d-48b1-bba9-3c7dbea32eaf",
     "user": "admin@eduflow.local",
     "role": "SUPER_ADMIN",
     "action": "USER_LOGIN",
     "entity": "AUTH",
     "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 11:52:49"
+    "timestamp": "2026-09-01 17:14:14"
   },
   {
-    "id": "3ba82fe6-f65f-4e41-a40a-3a61734a480b",
+    "id": "56585eb1-163d-4732-a5d1-5df6301f7582",
     "user": "admin@eduflow.local",
     "role": "SUPER_ADMIN",
     "action": "USER_LOGIN",
     "entity": "AUTH",
     "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 11:53:08"
-  },
-  {
-    "id": "3ceb3f14-0523-4503-9aa3-9533b6ad7bec",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 11:53:44"
-  },
-  {
-    "id": "3967ddeb-9a6c-4907-86ca-1f71b43a5ff5",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 11:58:58"
-  },
-  {
-    "id": "d3835781-4805-49ad-b011-b1b330852a46",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 11:59:41"
-  },
-  {
-    "id": "dbce050b-3b77-4471-8039-7d9693796e15",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 12:05:06"
-  },
-  {
-    "id": "105ef467-59a3-48ef-b2e6-ba3af8f71baf",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 12:07:10"
-  },
-  {
-    "id": "27ba4355-2c37-43b3-9ecb-e97ddc56a2e7",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 12:12:53"
-  },
-  {
-    "id": "a1286fff-b6e9-48f5-b2f9-841455eb348d",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 12:22:37"
-  },
-  {
-    "id": "a67ec7e3-03d5-4ac5-9834-eb51020e9250",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 12:32:55"
-  },
-  {
-    "id": "4f052587-3b0f-449b-a0a1-24114cd8fbd7",
-    "user": "teacher@eduflow.local",
-    "role": "TEACHER",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 12:44:30"
-  },
-  {
-    "id": "a16c87bc-aee1-421b-8966-dbdbef985d1d",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 12:48:05"
-  },
-  {
-    "id": "220df076-3346-4890-810f-57e3e219c527",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 17:07:19"
-  },
-  {
-    "id": "aef1a76b-3b2a-408d-a725-15fdc34cc753",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-08-31 17:25:29"
-  },
-  {
-    "id": "dee19ae5-6f3a-4ae0-98a0-200894232a95",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-09-01 13:58:41"
-  },
-  {
-    "id": "15aa80f7-cdb4-420b-806c-5c613a00ec30",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "CREATE_FACULTY",
-    "entity": "FACULTY",
-    "details": "Created faculty member FAC-2026-0003 - Revathi Miriyam",
-    "timestamp": "2026-09-01 14:00:29"
-  },
-  {
-    "id": "10f87e98-439a-429c-adf3-8f1eef9058af",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "CREATE_EXAM",
-    "entity": "EXAMINATIONS",
-    "details": "Created exam EXM-2026-0003 - sgffgjkjl;klhhcg",
-    "timestamp": "2026-09-01 14:03:54"
-  },
-  {
-    "id": "1671f844-872f-4825-9401-18f96fd05cf7",
-    "user": "teacher@eduflow.local",
-    "role": "TEACHER",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-09-01 14:16:42"
-  },
-  {
-    "id": "020db3cf-99c6-45ae-aece-7ab843627444",
-    "user": "admin@eduflow.local",
-    "role": "SUPER_ADMIN",
-    "action": "USER_LOGIN",
-    "entity": "AUTH",
-    "details": "User logged in successfully.",
-    "timestamp": "2026-09-01 16:35:28"
+    "timestamp": "2026-09-01 17:16:55"
   }
 ]

@@ -16,10 +16,12 @@ class FacultyService:
         self.timetable_repo = TimetableRepository()
         self.audit_repo = AuditRepository()
 
-    def get_paginated_faculty(self, page: int = 1, per_page: int = 10, search_query: str = None, department: str = None) -> Dict[str, Any]:
+    def get_paginated_faculty(self, page: int = 1, per_page: int = 10, search_query: str = None, department: str = None, institution_id: str = None) -> Dict[str, Any]:
         criteria = {}
         if department:
             criteria['department'] = department
+        if institution_id and institution_id != 'ALL':
+            criteria['institution_id'] = institution_id
 
         result = self.teacher_repo.paginate(
             page=page,
