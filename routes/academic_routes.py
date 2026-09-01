@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from services.academic_service import AcademicService
 from security.rbac import login_required, admin_required
 from security.session import SessionManager

@@ -40,7 +40,7 @@
                             <div class="small-text text-muted">{{ f.student_code }}</div>
                         </td>
                         <td>{{ f.title }}</td>
-                        <td>${{ "%.2f"|format(f.net_amount) }}</td>
+                        <td>${{ "%.2f"|format(f.get('net_amount', f.get('total_amount', 0.0))) }}</td>
                         <td class="text-success">${{ "%.2f"|format(f.paid_amount) }}</td>
                         <td class="text-danger"><strong>${{ "%.2f"|format(f.pending_amount) }}</strong></td>
                         <td>{{ f.due_date }}</td>

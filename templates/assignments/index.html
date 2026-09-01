@@ -48,9 +48,9 @@
                 <label>Record Status</label>
                 <select name="status" class="form-control">
                     <option value="">-- All Statuses --</option>
-                    <option value="ACTIVE" {{% if status == 'ACTIVE' %}}selected{{% endif %}}>ACTIVE</option>
-                    <option value="INACTIVE" {{% if status == 'INACTIVE' %}}selected{{% endif %}}>INACTIVE</option>
-                    <option value="ARCHIVED" {{% if status == 'ARCHIVED' %}}selected{{% endif %}}>ARCHIVED</option>
+                    <option value="ACTIVE" {% if status == 'ACTIVE' %}selected{% endif %}>ACTIVE</option>
+                    <option value="INACTIVE" {% if status == 'INACTIVE' %}selected{% endif %}>INACTIVE</option>
+                    <option value="ARCHIVED" {% if status == 'ARCHIVED' %}selected{% endif %}>ARCHIVED</option>
                 </select>
             </div>
             <div class="form-group d-flex align-items-end gap-10">
@@ -95,7 +95,7 @@
                         </td>
                         <td><span class="badge badge-light">{{ item.code or 'N/A' }}</span></td>
                         <td>
-                            <span class="badge {{% if item.status == 'ACTIVE' %}}badge-success{{% else %}}badge-secondary{{% endif %}}">
+                            <span class="badge {% if item.status == 'ACTIVE' %}badge-success{% else %}badge-secondary{% endif %}">
                                 {{ item.status or 'ACTIVE' }}
                             </span>
                         </td>
@@ -125,7 +125,7 @@
             <a href="{{ url_for('assignments.index', page=pagination.page-1, q=search_q, status=status) }}" class="page-item">« Previous</a>
             {% endif %}
             {% for p in range(1, pagination.total_pages + 1) %}
-            <a href="{{ url_for('assignments.index', page=p, q=search_q, status=status) }}" class="page-item {{% if p == pagination.page %}}active{{% endif %}}">{{ p }}</a>
+            <a href="{{ url_for('assignments.index', page=p, q=search_q, status=status) }}" class="page-item {% if p == pagination.page %}active{% endif %}">{{ p }}</a>
             {% endfor %}
             {% if pagination.has_next %}
             <a href="{{ url_for('assignments.index', page=pagination.page+1, q=search_q, status=status) }}" class="page-item">Next »</a>

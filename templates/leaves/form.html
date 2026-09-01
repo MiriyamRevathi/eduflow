@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{% if item %}}Edit Leave Requests{{% else %}}Create Leave Requests{{% endif %}}{% endblock %}
+{% block title %}{% if item %}Edit Leave Requests{% else %}Create Leave Requests{% endif %}{% endblock %}
 
 {% block content %}
 <div class="page-header">
@@ -25,9 +25,9 @@
                 <div class="form-group">
                     <label>Status</label>
                     <select name="status" class="form-control">
-                        <option value="ACTIVE" {{% if item and item.status == 'ACTIVE' %}}selected{{% endif %}}>ACTIVE</option>
-                        <option value="INACTIVE" {{% if item and item.status == 'INACTIVE' %}}selected{{% endif %}}>INACTIVE</option>
-                        <option value="ARCHIVED" {{% if item and item.status == 'ARCHIVED' %}}selected{{% endif %}}>ARCHIVED</option>
+                        <option value="ACTIVE" {% if item and item.status == 'ACTIVE' %}selected{% endif %}>ACTIVE</option>
+                        <option value="INACTIVE" {% if item and item.status == 'INACTIVE' %}selected{% endif %}>INACTIVE</option>
+                        <option value="ARCHIVED" {% if item and item.status == 'ARCHIVED' %}selected{% endif %}>ARCHIVED</option>
                     </select>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 EduFlow ERP Route Controller — UserRoutes
 Blueprint routes for System user management, RBAC, and user security policies.
 """
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from services.user_service import UserService
 from security.rbac import login_required, admin_required
 from security.session import SessionManager
